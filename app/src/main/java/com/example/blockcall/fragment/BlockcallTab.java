@@ -24,7 +24,7 @@ public class BlockcallTab extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_blockcall, container, false);
 
         fab = rootView.findViewById(R.id.fab_blockcall);
-//        rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
+        rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
