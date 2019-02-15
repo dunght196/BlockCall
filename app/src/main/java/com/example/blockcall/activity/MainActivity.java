@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.TabAdapter;
+import com.example.blockcall.db.table.BlacklistData;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager());
         viewPager.setAdapter(tabAdapter);
         mTablayout.setupWithViewPager(viewPager);
+
+        BlacklistData.Instance(this);
     }
 
     @Override
