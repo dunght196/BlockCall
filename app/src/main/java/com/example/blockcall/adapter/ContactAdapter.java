@@ -49,9 +49,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    Toast.makeText(context, "zzzz", Toast.LENGTH_SHORT).show();
+                    itemClickListener.onCheckClick(i);
                 }else {
-                    Toast.makeText(context, "aaa", Toast.LENGTH_SHORT).show();
+                    itemClickListener.onUncheckClick(i);
                 }
             }
         });

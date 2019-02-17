@@ -1,17 +1,23 @@
 package com.example.blockcall.activity;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
 
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.ContactAdapter;
 import com.example.blockcall.controller.ItemClickListener;
+import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
 
 import java.util.ArrayList;
@@ -23,6 +29,8 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
     List<ContactObj> listContact;
     Toolbar toolbar;
     ContentResolver contentResolver;
+    Boolean[] listIndex;
+    ImageView ivBack, ivDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +40,39 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         rvContact = (RecyclerView) findViewById(R.id.rv_contact);
+        ivBack = (ImageView)findViewById(R.id.iv_back);
+        ivDone = (ImageView)findViewById(R.id.iv_done);
 
         listContact = getListContacts();
+        listIndex = new Boolean[listContact.size()];
+        for(int i=0; i<listIndex.length; i++) {
+            listIndex[i] = false;
+        }
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
         ContactAdapter contactAdapter = new ContactAdapter(listContact, ContactActivity.this, this);
         rvContact.setAdapter(contactAdapter);
+
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ContactActivity.this, MainActivity.class));
+            }
+        });
+
+        ivDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(int i=0; i<listIndex.length; i++) {
+                    if(listIndex[i] == true) {
+                        BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
+                    }
+                }
+
+                startActivity(new Intent(ContactActivity.this, MainActivity.class));
+            }
+        });
     }
 
     private List<ContactObj> getListContacts() {
@@ -52,8 +87,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
                         cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 contactObj.setUserName(name);
-                if (cur.getInt(cur.getColumnIndex(
-                        ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
                     Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                             null,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
@@ -78,11 +112,11 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
 
     @Override
     public void onCheckClick(int position) {
-
+        listIndex[position] = true;
     }
 
     @Override
     public void onUncheckClick(int position) {
-
+        listIndex[position] = false;
     }
 }
