@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.TabAdapter;
 import com.example.blockcall.db.table.BlacklistData;
+import com.example.blockcall.fragment.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
