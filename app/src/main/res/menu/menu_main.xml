@@ -2,9 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.myapplication.MainActivity">
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_setting"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/edit"
+        android:icon="@drawable/ic_toolbar_done"/>
+
 </menu>

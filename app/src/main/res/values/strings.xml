@@ -7,4 +7,9 @@
     <string name="key_block_call">key_block</string>
     <string name="title_syn">Synchrony</string>
     <string name="key_syn">key_syn</string>
+
+    <!--  Action Mode Menu Items -->
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+
 </resources>

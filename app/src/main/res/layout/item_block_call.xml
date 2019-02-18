@@ -6,7 +6,7 @@
     android:layout_margin="12dp">
 
     <ImageView
-        android:id="@+id/iv_blacklist"
+        android:id="@+id/iv_block_call"
         android:src="@drawable/ic_contact"
         android:layout_width="80dp"
         android:layout_height="80dp"
@@ -17,7 +17,7 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/iv_blacklist"
+        android:layout_toRightOf="@id/iv_block_call"
         android:layout_marginLeft="10dp"
         android:orientation="vertical">
 
@@ -25,17 +25,36 @@
             android:layout_marginTop="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_name_blacklist"
+            android:id="@+id/tv_name_block_call"
             android:text="User name"
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/tv_phone_blacklist"
+            android:id="@+id/tv_phone_block_call"
             android:layout_marginTop="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0982503083"
             android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_date_block"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"/>
+        <TextView
+            android:id="@+id/tv_time_block"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time"/>
 
     </LinearLayout>
 

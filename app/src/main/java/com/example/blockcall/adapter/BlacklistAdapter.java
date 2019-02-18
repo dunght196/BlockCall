@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.blockcall.R;
+import com.example.blockcall.controller.ItemClickListener;
+import com.example.blockcall.controller.RecyclerClick_Listener;
 import com.example.blockcall.model.ContactObj;
 
 import java.util.List;
@@ -19,10 +21,12 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
 
     List<ContactObj> listBlack;
     Context context;
+    RecyclerClick_Listener recyclerClick_listener;
 
-    public BlacklistAdapter(List<ContactObj> listContact, Context context) {
+    public BlacklistAdapter(List<ContactObj> listContact, Context context, RecyclerClick_Listener recyclerClick_listener) {
         this.listBlack = listContact;
         this.context = context;
+        this.recyclerClick_listener = recyclerClick_listener;
     }
 
     @NonNull
@@ -38,6 +42,28 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvName.setText(listBlack.get(i).getUserName());
         myViewHolder.tvPhone.setText(listBlack.get(i).getPhoneNum());
+//        myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+////            @Override
+////            public boolean onLongClick(View v) {
+////                recyclerClick_listener.onLongClick(i);
+////                return true;
+////            }
+////        });
+
+//        myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                recyclerClick_listener.onClick(i);
+//            }
+//        });
+
+        myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                recyclerClick_listener.onLongClick(i);
+                return true;
+            }
+        });
     }
 
     @Override
