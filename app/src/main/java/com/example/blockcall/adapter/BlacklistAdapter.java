@@ -23,10 +23,9 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     Context context;
     RecyclerClick_Listener recyclerClick_listener;
 
-    public BlacklistAdapter(List<ContactObj> listContact, Context context, RecyclerClick_Listener recyclerClick_listener) {
+    public BlacklistAdapter(List<ContactObj> listContact, Context context) {
         this.listBlack = listContact;
         this.context = context;
-        this.recyclerClick_listener = recyclerClick_listener;
     }
 
     @NonNull
@@ -42,33 +41,21 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvName.setText(listBlack.get(i).getUserName());
         myViewHolder.tvPhone.setText(listBlack.get(i).getPhoneNum());
-//        myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-////            @Override
-////            public boolean onLongClick(View v) {
-////                recyclerClick_listener.onLongClick(i);
-////                return true;
-////            }
-////        });
-
-//        myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                recyclerClick_listener.onClick(i);
-//            }
-//        });
-
-        myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                recyclerClick_listener.onLongClick(i);
-                return true;
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
         return listBlack.size();
+    }
+
+    private static OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        boolean onLongItemClick(View itemView, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -77,11 +64,20 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
         TextView tvName;
         TextView tvPhone;
 
-        public MyViewHolder(View itemView) {
+        public MyViewHolder(final View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.iv_blacklist);
             tvName = (TextView) itemView.findViewById(R.id.tv_name_blacklist);
             tvPhone = (TextView) itemView.findViewById(R.id.tv_phone_blacklist);
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null)
+                        listener.onLongItemClick(itemView, getLayoutPosition());
+                    return true;
+                }
+            });
         }
     }
 }

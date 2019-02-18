@@ -9,8 +9,4 @@
         android:title="@string/action_setting"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/edit"
-        android:icon="@drawable/ic_toolbar_done"/>
-
 </menu>
