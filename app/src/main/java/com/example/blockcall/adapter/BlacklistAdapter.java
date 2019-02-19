@@ -18,7 +18,6 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
 
     List<ContactObj> listBlack;
     Context context;
-    RecyclerClick_Listener recyclerClick_listener;
 
     public BlacklistAdapter(List<ContactObj> listContact, Context context) {
         this.listBlack = listContact;
