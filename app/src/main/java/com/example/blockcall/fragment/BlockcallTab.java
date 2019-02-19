@@ -26,6 +26,7 @@ public class BlockcallTab extends Fragment {
     FloatingActionButton fab;
     RecyclerView rvBlockcall;
     List<ContactObj> listBlock;
+    BlockcallAdapter blockcallAdapter;
 
     @Nullable
     @Override
@@ -38,15 +39,16 @@ public class BlockcallTab extends Fragment {
         if(listBlock.size() > 0) {
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             rvBlockcall.setLayoutManager(mLayoutManager);
-            BlockcallAdapter blockcallAdapter = new BlockcallAdapter(listBlock, getContext());
+            blockcallAdapter = new BlockcallAdapter(listBlock, getContext());
             rvBlockcall.setAdapter(blockcallAdapter);
         }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                BlockcallData.Instance(getContext()).deleteAll();
+                listBlock.clear();
+                blockcallAdapter.notifyDataSetChanged();
             }
         });
 

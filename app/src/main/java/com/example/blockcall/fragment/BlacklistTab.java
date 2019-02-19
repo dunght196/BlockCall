@@ -7,10 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,13 +19,11 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.blockcall.R;
 import com.example.blockcall.activity.ContactActivity;
 import com.example.blockcall.activity.MainActivity;
 import com.example.blockcall.adapter.BlacklistAdapter;
-import com.example.blockcall.controller.RecyclerClick_Listener;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
 
@@ -82,6 +78,13 @@ public class BlacklistTab extends Fragment {
                             contactObj.setPhoneNum(edtPhone.getText().toString());
                             BlacklistData.Instance(getContext()).update(contactObj);
                             startActivity(new Intent(getActivity(), MainActivity.class));
+                        }
+                    });
+                    tvCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.cancel();
+                            mActionMode.finish();
                         }
                     });
                     dialog.show();

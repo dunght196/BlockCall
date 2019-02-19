@@ -50,6 +50,12 @@ public class BlockcallData {
         sqLiteDatabase.close();
     }
 
+    public void deleteAll() {
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+        sqLiteDatabase.execSQL("DELETE FROM " + DatabaseManager.TABLE_BLOCKCALL_NAME );
+        sqLiteDatabase.close();
+    }
+
     public void update(ContactObj contactObj) {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
