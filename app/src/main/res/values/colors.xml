@@ -3,9 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#008577</color>
+    <color name="colorLine">#dddddd</color>
 
-    <!--  It should be true otherwise action mode will not overlay toolbar -->
-    <!--  For Custom Action Mode Background Color/Drawable -->
-    <!--<item name="actionModeBackground">@color/colorAccent</item>-->
+
 
 </resources>

@@ -53,6 +53,7 @@ public class BlockcallAdapter extends RecyclerView.Adapter<BlockcallAdapter.MyVi
         TextView tvPhone;
         TextView tvDate;
         TextView tvTime;
+        View view;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -61,6 +62,7 @@ public class BlockcallAdapter extends RecyclerView.Adapter<BlockcallAdapter.MyVi
             tvPhone = (TextView) itemView.findViewById(R.id.tv_phone_block_call);
             tvDate = (TextView) itemView.findViewById(R.id.tv_date_block);
             tvTime = (TextView) itemView.findViewById(R.id.tv_time_block);
+            view = (View)itemView.findViewById(R.id.view_line_block);
         }
     }
 }

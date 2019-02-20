@@ -26,7 +26,7 @@ import java.util.List;
 public class ContactActivity extends AppCompatActivity implements ItemClickListener {
 
     RecyclerView rvContact;
-    List<ContactObj> listContact;
+    List<ContactObj> listContact = new ArrayList<>();
     Toolbar toolbar;
     ContentResolver contentResolver;
     Boolean[] listIndex;
@@ -43,7 +43,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
 
-        listContact = getListContacts();
+        listContact.addAll(getListContacts());
         listIndex = new Boolean[listContact.size()];
         for(int i=0; i<listIndex.length; i++) {
             listIndex[i] = false;

@@ -19,13 +19,14 @@ import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.db.table.BlockcallData;
 import com.example.blockcall.model.ContactObj;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockcallTab extends Fragment {
 
     FloatingActionButton fab;
     RecyclerView rvBlockcall;
-    List<ContactObj> listBlock;
+    List<ContactObj> listBlock = new ArrayList<>();
     BlockcallAdapter blockcallAdapter;
 
     @Nullable
@@ -35,13 +36,12 @@ public class BlockcallTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blockcall);
         rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
-        listBlock = BlockcallData.Instance(getContext()).getAllBlockCall();
-        if(listBlock.size() > 0) {
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-            rvBlockcall.setLayoutManager(mLayoutManager);
-            blockcallAdapter = new BlockcallAdapter(listBlock, getContext());
-            rvBlockcall.setAdapter(blockcallAdapter);
-        }
+
+        listBlock.addAll( BlockcallData.Instance(getContext()).getAllBlockCall());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvBlockcall.setLayoutManager(mLayoutManager);
+        blockcallAdapter = new BlockcallAdapter(listBlock, getContext());
+        rvBlockcall.setAdapter(blockcallAdapter);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

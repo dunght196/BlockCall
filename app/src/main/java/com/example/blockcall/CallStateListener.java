@@ -26,7 +26,7 @@ public class CallStateListener extends PhoneStateListener {
         switch (state) {
             case TelephonyManager.CALL_STATE_RINGING:
                 // called when someone is ringing to this phone
-                if(AppUtil.isEnable(mContext) && isBlacknumber(incomingNumber)){
+                if(AppUtil.isEnableBlock(mContext) && isBlacknumber(incomingNumber)){
                     AppUtil.endCall(mContext);
 
                     // Insert db Blockcall object

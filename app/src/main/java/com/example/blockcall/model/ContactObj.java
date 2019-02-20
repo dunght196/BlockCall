@@ -1,5 +1,8 @@
 package com.example.blockcall.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class ContactObj {
 
     private int id;

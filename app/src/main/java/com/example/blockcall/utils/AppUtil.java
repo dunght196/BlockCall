@@ -11,12 +11,20 @@ import java.lang.reflect.Method;
 
 public class AppUtil {
 
-    public static void setEnable(Context context, boolean value){
-        PrefUtil.setBoolean(context,Constant.ENABLE_KEY,value);
+    public static void setEnableBlock(Context context, boolean value){
+        PrefUtil.setBoolean(context,Constant.ENABLE_KEY_BLOCK,value);
     }
 
-    public static boolean isEnable(Context context){
-        return PrefUtil.getBoolean(context,Constant.ENABLE_KEY,false);
+    public static void setEnableSyn(Context context, boolean value){
+        PrefUtil.setBoolean(context,Constant.ENABLE_KEY_SYN,value);
+    }
+
+    public static boolean isEnableBlock(Context context){
+        return PrefUtil.getBoolean(context,Constant.ENABLE_KEY_BLOCK,false);
+    }
+
+    public static boolean isEnableSyn(Context context){
+        return PrefUtil.getBoolean(context,Constant.ENABLE_KEY_SYN,false);
     }
 
 

@@ -71,6 +71,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         ImageView imageView;
         TextView tvName;
         TextView tvPhone;
+        View view;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -78,6 +79,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             imageView = (ImageView) itemView.findViewById(R.id.iv_contact);
             tvName = (TextView) itemView.findViewById(R.id.tv_name);
             tvPhone = (TextView) itemView.findViewById(R.id.tv_phone);
+            view = (View)itemView.findViewById(R.id.view_line_contact);
         }
     }
 }

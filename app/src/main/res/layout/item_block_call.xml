@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp">
+    android:layout_margin="6dp">
 
     <ImageView
         android:id="@+id/iv_block_call"
@@ -58,5 +58,12 @@
             android:text="Time"/>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/view_line_block"
+        android:background="@color/colorLine"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:layout_below="@+id/iv_block_call" />
 
 </RelativeLayout>

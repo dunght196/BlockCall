@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp">
+    android:layout_margin="6dp">
 
     <CheckBox
         android:id="@+id/cb_contact"
@@ -45,6 +45,13 @@
             android:textStyle="bold"/>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/view_line_contact"
+        android:background="@color/colorLine"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/iv_contact" />
 
 
 

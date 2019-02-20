@@ -3,12 +3,14 @@ package com.example.blockcall.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,17 +28,27 @@ import com.example.blockcall.activity.MainActivity;
 import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
+import com.example.blockcall.utils.AppUtil;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlacklistTab extends Fragment {
 
     FloatingActionButton fab;
     RecyclerView rvBlacklist;
-    List<ContactObj> listBlack;
+    List<ContactObj> listBlack = new ArrayList<>();
+    List<ContactObj> listSyn;
     BlacklistAdapter blacklistAdapter;
     ActionMode mActionMode;
     int pos = -1;
+    DatabaseReference mDatabase;
 
     ActionMode.Callback modeCallBack = new ActionMode.Callback() {
         @Override
@@ -64,8 +76,8 @@ public class BlacklistTab extends Fragment {
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.dialog_edit_item_black);
 
-                    final EditText edtName = (EditText)dialog.findViewById(R.id.edt_edit_name);
-                    final EditText edtPhone = (EditText)dialog.findViewById(R.id.edt_edit_phone);
+                    final EditText edtName = (EditText) dialog.findViewById(R.id.edt_edit_name);
+                    final EditText edtPhone = (EditText) dialog.findViewById(R.id.edt_edit_phone);
                     TextView tvOK = (TextView) dialog.findViewById(R.id.tv_edit_ok);
                     TextView tvCancel = (TextView) dialog.findViewById(R.id.tv_edit_cancel);
                     edtName.setText(listBlack.get(pos).getUserName());
@@ -107,30 +119,33 @@ public class BlacklistTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
-        listBlack = BlacklistData.Instance(getContext()).getAllBlacklist();
-        if(listBlack.size() > 0) {
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-            rvBlacklist.setLayoutManager(mLayoutManager);
-            blacklistAdapter = new BlacklistAdapter(listBlack, getContext());
-            rvBlacklist.setAdapter(blacklistAdapter);
 
-            blacklistAdapter.setOnItemClickListener(new BlacklistAdapter.OnItemClickListener() {
-                @Override
-                public boolean onLongItemClick(View itemView, int position) {
-                    if (mActionMode != null) {
-                        return false;
-                    }
 
-                    pos = position;
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvBlacklist.setLayoutManager(mLayoutManager);
+        blacklistAdapter = new BlacklistAdapter(listBlack, getContext());
+        rvBlacklist.setAdapter(blacklistAdapter);
 
-                    // Start the CAB using the ActionMode.Callback defined above
-                    mActionMode = getActivity().startActionMode(modeCallBack);
-                    itemView.setSelected(true);
-                    return true;
-                }
-            });
-        }
-
+        blacklistAdapter.setOnItemClickListener(new BlacklistAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                pos = position;
+                // Start the CAB using the ActionMode.Callback defined above
+                mActionMode = getActivity().startActionMode(modeCallBack);
+                itemView.setSelected(true);
+            }
+//            @Override
+//            public boolean onLongItemClick(View itemView, int position) {
+//                if (mActionMode != null) {
+//                    return false;
+//                }
+//                pos = position;
+//                // Start the CAB using the ActionMode.Callback defined above
+//                mActionMode = getActivity().startActionMode(modeCallBack);
+//                itemView.setSelected(true);
+//                return true;
+//            }
+        });
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -157,8 +172,8 @@ public class BlacklistTab extends Fragment {
                         final Dialog dialog1 = new Dialog(getActivity());
                         dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         dialog1.setContentView(R.layout.dialog_input_number);
-                        final EditText edtName = (EditText)dialog1.findViewById(R.id.edt_name);
-                        final EditText edtPhone = (EditText)dialog1.findViewById(R.id.edt_phone);
+                        final EditText edtName = (EditText) dialog1.findViewById(R.id.edt_name);
+                        final EditText edtPhone = (EditText) dialog1.findViewById(R.id.edt_phone);
                         TextView tvOK = (TextView) dialog1.findViewById(R.id.tv_ok);
                         TextView tvCancel = (TextView) dialog1.findViewById(R.id.tv_cancel);
                         dialog1.show();
@@ -191,4 +206,36 @@ public class BlacklistTab extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mDatabase = FirebaseDatabase.getInstance().getReference("contacts");
+        boolean checkSw = AppUtil.isEnableSyn(getContext());
+        if (checkSw) {
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    listBlack.clear();
+                    BlacklistData.Instance(getContext()).deleteAll();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
+                        listBlack.add(contactObj);
+                        // save db
+                        BlacklistData.Instance(getContext()).add(contactObj);
+                    }
+
+                    blacklistAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+        } else {
+            listBlack.clear();
+            listBlack.addAll(BlacklistData.Instance(getContext()).getAllBlacklist());
+            blacklistAdapter.notifyDataSetChanged();
+        }
+    }
 }

@@ -13,19 +13,21 @@ import com.example.blockcall.R;
 import com.example.blockcall.adapter.TabAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.fragment.SettingsFragment;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout mTablayout;
     private ViewPager viewPager;
 
+    DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
 
         mTablayout =(TabLayout)findViewById(R.id.tab_layout);
         viewPager =(ViewPager) findViewById(R.id.view_pager);

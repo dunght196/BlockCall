@@ -47,7 +47,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     private static OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        boolean onLongItemClick(View itemView, int position);
+        void onItemClick(View itemView, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -59,19 +59,21 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
         ImageView imageView;
         TextView tvName;
         TextView tvPhone;
+        View view;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.iv_blacklist);
             tvName = (TextView) itemView.findViewById(R.id.tv_name_blacklist);
             tvPhone = (TextView) itemView.findViewById(R.id.tv_phone_blacklist);
+            view = (View)itemView.findViewById(R.id.view_line_blackllist);
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
-                    if (listener != null)
-                        listener.onLongItemClick(itemView, getLayoutPosition());
-                    return true;
+                public void onClick(View v) {
+                    if(listener != null) {
+                        listener.onItemClick(itemView, getLayoutPosition());
+                    }
                 }
             });
         }
