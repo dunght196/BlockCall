@@ -1,5 +1,9 @@
 package com.example.blockcall.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +23,11 @@ import com.example.blockcall.adapter.BlockcallAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.db.table.BlockcallData;
 import com.example.blockcall.model.ContactObj;
+import com.example.blockcall.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class BlockcallTab extends Fragment {
 
@@ -28,6 +35,20 @@ public class BlockcallTab extends Fragment {
     RecyclerView rvBlockcall;
     List<ContactObj> listBlock = new ArrayList<>();
     BlockcallAdapter blockcallAdapter;
+    IntentFilter mIntentFilter;
+    MyBroadCastReceiver myBroadCastReceiver;
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Constant.mBroadcastAction)) {
+                listBlock.clear();
+                listBlock.addAll( BlockcallData.Instance(context).getAllBlockCall());
+                blockcallAdapter.notifyDataSetChanged();
+                Log.d("broadcast",intent.getStringExtra("Data"));
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -36,6 +57,8 @@ public class BlockcallTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blockcall);
         rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
+        myBroadCastReceiver = new MyBroadCastReceiver();
+
 
         listBlock.addAll( BlockcallData.Instance(getContext()).getAllBlockCall());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -54,4 +77,33 @@ public class BlockcallTab extends Fragment {
 
         return rootView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constant.mBroadcastAction);
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(mReceiver);
+    }
+
+    class MyBroadCastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Constant.mBroadcastAction)) {
+                listBlock.clear();
+                listBlock.addAll( BlockcallData.Instance(context).getAllBlockCall());
+                Log.e("test","size" + listBlock.size());
+                blockcallAdapter.notifyDataSetChanged();
+                Log.d("broadcast",intent.getStringExtra("Data"));
+            }
+        }
+    }
+
 }

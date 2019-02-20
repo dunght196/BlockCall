@@ -14,6 +14,7 @@ import android.telephony.TelephonyManager;
 import com.example.blockcall.CallStateListener;
 import com.example.blockcall.R;
 import com.example.blockcall.activity.MainActivity;
+import com.example.blockcall.utils.Constant;
 
 public class BlockCallService extends Service {
 
@@ -33,6 +34,15 @@ public class BlockCallService extends Service {
         mCallStateListener  = new CallStateListener (this);
         mTelephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mCallStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(Constant.mBroadcastAction);
+        broadcastIntent.putExtra("Data", "hello");
+        sendBroadcast(broadcastIntent);
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -57,8 +67,8 @@ public class BlockCallService extends Service {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
         NotificationCompat.Builder mBuilder = new  NotificationCompat.Builder(this,"10001");
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
-        mBuilder.setContentTitle("Service running")
+        mBuilder.setSmallIcon(R.drawable.ic_block);
+        mBuilder.setContentTitle("Đang bật chặn cuộc gọi")
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setChannelId("10001")

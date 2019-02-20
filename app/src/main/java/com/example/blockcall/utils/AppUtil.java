@@ -1,11 +1,14 @@
 package com.example.blockcall.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 
 import com.android.internal.telephony.ITelephony;
+import com.example.blockcall.service.BlockCallService;
 
 import java.lang.reflect.Method;
 
@@ -38,6 +41,18 @@ public class AppUtil {
             telephony.endCall();
         } catch(Exception e){
             Log.d("AppUtil",e.getMessage());
+        }
+    }
+
+    public static void enableService(Context context, boolean enable){
+        if (enable) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(new Intent(context, BlockCallService.class));
+            } else {
+                context.startService(new Intent(context, BlockCallService.class));
+            }
+        } else {
+            context.stopService(new Intent(context, BlockCallService.class));
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.blockcall.fragment;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
+import com.example.blockcall.utils.Constant;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,6 +51,7 @@ public class BlacklistTab extends Fragment {
     ActionMode mActionMode;
     int pos = -1;
     DatabaseReference mDatabase;
+    IntentFilter mIntentFilter;
 
     ActionMode.Callback modeCallBack = new ActionMode.Callback() {
         @Override
@@ -134,17 +137,6 @@ public class BlacklistTab extends Fragment {
                 mActionMode = getActivity().startActionMode(modeCallBack);
                 itemView.setSelected(true);
             }
-//            @Override
-//            public boolean onLongItemClick(View itemView, int position) {
-//                if (mActionMode != null) {
-//                    return false;
-//                }
-//                pos = position;
-//                // Start the CAB using the ActionMode.Callback defined above
-//                mActionMode = getActivity().startActionMode(modeCallBack);
-//                itemView.setSelected(true);
-//                return true;
-//            }
         });
 
 
@@ -209,6 +201,11 @@ public class BlacklistTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constant.mBroadcastAction);
+
+        boolean enableValue = AppUtil.isEnableBlock(getActivity());
+        AppUtil.enableService(getActivity(),enableValue);
         mDatabase = FirebaseDatabase.getInstance().getReference("contacts");
         boolean checkSw = AppUtil.isEnableSyn(getContext());
         if (checkSw) {
