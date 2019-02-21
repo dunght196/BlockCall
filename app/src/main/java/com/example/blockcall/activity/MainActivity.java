@@ -1,6 +1,8 @@
 package com.example.blockcall.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.TabAdapter;
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initPermission();
 
         mTablayout =(TabLayout)findViewById(R.id.tab_layout);
         viewPager =(ViewPager) findViewById(R.id.view_pager);
@@ -60,6 +65,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void initPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                //Permisson don't granted
+                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+                    Toast.makeText(MainActivity.this, "Permission isn't granted ", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "Permisson don't granted and dont show dialog again ", Toast.LENGTH_SHORT).show();
+                }
+                //Register permission
+                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
+            }
         }
     }
 }
