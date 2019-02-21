@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initPermission();
-
         mTablayout =(TabLayout)findViewById(R.id.tab_layout);
         viewPager =(ViewPager) findViewById(R.id.view_pager);
 
@@ -43,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         mTablayout.setupWithViewPager(viewPager);
 
         BlacklistData.Instance(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -65,17 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void initPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                //Permisson don't granted
-                if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
-                    Toast.makeText(MainActivity.this, "Permission isn't granted ", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(MainActivity.this, "Permisson don't granted and dont show dialog again ", Toast.LENGTH_SHORT).show();
-                }
-                //Register permission
-                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
-            }
+            //Register permission
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE}, 1);
         }
     }
+
+
 }

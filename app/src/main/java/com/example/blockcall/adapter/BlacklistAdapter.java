@@ -1,8 +1,10 @@
 package com.example.blockcall.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +14,26 @@ import android.widget.TextView;
 import com.example.blockcall.R;
 import com.example.blockcall.model.ContactObj;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyViewHolder> {
 
     List<ContactObj> listBlack;
     Context context;
+    private static OnItemClickListener listener;
+    SparseBooleanArray selectedItems;
+
+
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
 
     public BlacklistAdapter(List<ContactObj> listContact, Context context) {
         this.listBlack = listContact;
         this.context = context;
+        selectedItems = new SparseBooleanArray();
     }
 
     @NonNull
@@ -37,6 +49,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvName.setText(listBlack.get(i).getUserName());
         myViewHolder.tvPhone.setText(listBlack.get(i).getPhoneNum());
+//        myViewHolder.itemView.setActivated(selectedItems.get(i, false));
     }
 
     @Override
@@ -44,11 +57,6 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
         return listBlack.size();
     }
 
-    private static OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
-    }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
@@ -77,6 +85,35 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
                 }
             });
 
+        }
+    }
+
+    public void toggleSelection(View itemView, int pos) {
+        if(selectedItems.get(pos, false)) {
+            selectedItems.delete(pos);
+            itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+        }else {
+            selectedItems.put(pos,true);
+
+            itemView.setBackgroundColor(Color.parseColor("#DDDDDD"));
+
+        }
+    }
+
+    public int getSelectedItemCount() {
+        return selectedItems.size();
+    }
+
+    public List<Integer> getPositionItem() {
+        List<Integer> listItem = new ArrayList<>();
+        for(int i=0; i<selectedItems.size(); i++) {
+            listItem.add(selectedItems.keyAt(i));
+        }
+        return listItem;
+    }
+
+    public void deleteSelectedItem() {
+        for(int i=0; i<selectedItems.size(); i++) {
         }
     }
 }

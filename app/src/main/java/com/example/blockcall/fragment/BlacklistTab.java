@@ -3,6 +3,7 @@ package com.example.blockcall.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,13 +48,11 @@ public class BlacklistTab extends Fragment {
     FloatingActionButton fab;
     RecyclerView rvBlacklist;
     List<ContactObj> listBlack = new ArrayList<>();
-    List<ContactObj> listSyn;
     BlacklistAdapter blacklistAdapter;
     ActionMode mActionMode;
     int pos = -1;
     DatabaseReference mDatabase;
     IntentFilter mIntentFilter;
-
     ActionMode.Callback modeCallBack = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -69,8 +69,10 @@ public class BlacklistTab extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    BlacklistData.Instance(getContext()).delete(listBlack.get(pos));
-                    listBlack.remove(pos);
+                    for(Integer value : blacklistAdapter.getPositionItem()) {
+                        BlacklistData.Instance(getContext()).delete(listBlack.get(pos));
+                        listBlack.remove(pos);
+                    }
                     blacklistAdapter.notifyDataSetChanged();
                     mActionMode.finish();
                     return true;
@@ -133,9 +135,7 @@ public class BlacklistTab extends Fragment {
             @Override
             public void onItemClick(View itemView, int position) {
                 pos = position;
-                // Start the CAB using the ActionMode.Callback defined above
-                mActionMode = getActivity().startActionMode(modeCallBack);
-                itemView.setSelected(true);
+                enableActionMode(itemView,position);
             }
         });
 
@@ -198,12 +198,32 @@ public class BlacklistTab extends Fragment {
         return rootView;
     }
 
+    public void enableActionMode(View itemView, int position) {
+        mActionMode = getActivity().startActionMode(modeCallBack);
+        itemView.setSelected(true);
+        toggleSelection(itemView,position);
+    }
+
+    public void toggleSelection(View itemView, int position) {
+        blacklistAdapter.toggleSelection(itemView,position);
+        int count = blacklistAdapter.getSelectedItemCount();
+        if(count == 0) {
+            itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+            mActionMode.finish();
+            mActionMode = null;
+        }else {
+            if(count > 1) {
+                MenuItem menuItem = mActionMode.getMenu().findItem(R.id.action_edit);
+                menuItem.setVisible(false);
+            }
+            mActionMode.setTitle(String.valueOf(count));
+            mActionMode.invalidate();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Constant.mBroadcastAction);
-
         boolean enableValue = AppUtil.isEnableBlock(getActivity());
         AppUtil.enableService(getActivity(),enableValue);
         mDatabase = FirebaseDatabase.getInstance().getReference("contacts");

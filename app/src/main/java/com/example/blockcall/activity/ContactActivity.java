@@ -118,7 +118,6 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
             cur.close();
         }
 
-
         return listData;
     }
 
