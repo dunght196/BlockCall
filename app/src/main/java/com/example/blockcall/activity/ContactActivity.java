@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -21,12 +22,14 @@ import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements ItemClickListener {
 
     RecyclerView rvContact;
     List<ContactObj> listContact = new ArrayList<>();
+    ContactAdapter contactAdapter;
     Toolbar toolbar;
     ContentResolver contentResolver;
     Boolean[] listIndex;
@@ -43,7 +46,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
 
-        listContact.addAll(getListContacts());
+
         listIndex = new Boolean[listContact.size()];
         for(int i=0; i<listIndex.length; i++) {
             listIndex[i] = false;
@@ -51,7 +54,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
-        ContactAdapter contactAdapter = new ContactAdapter(listContact, ContactActivity.this, this);
+        contactAdapter = new ContactAdapter(listContact, ContactActivity.this, this);
         rvContact.setAdapter(contactAdapter);
 
         ivBack.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +78,22 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listContact.addAll(getListContacts());
+        // Remove contact contain listBlack
+        for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
+            for(ContactObj c2 : listContact ) {
+                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+                    listContact.remove(c2);
+                    break;
+                }
+            }
+        }
+        contactAdapter.notifyDataSetChanged();
+    }
+
     private List<ContactObj> getListContacts() {
         List<ContactObj> listData = new ArrayList<>();
         ContentResolver cr = getContentResolver();
@@ -83,8 +102,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         if ((cur != null ? cur.getCount() : 0) > 0) {
             while (cur != null && cur.moveToNext()) {
                 ContactObj contactObj = new ContactObj();
-                String id = cur.getString(
-                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 contactObj.setUserName(name);
                 if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {

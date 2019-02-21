@@ -1,6 +1,7 @@
 package com.example.blockcall;
 
 import android.content.Context;
+import android.content.Intent;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
@@ -8,6 +9,7 @@ import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.db.table.BlockcallData;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
+import com.example.blockcall.utils.Constant;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +38,11 @@ public class CallStateListener extends PhoneStateListener {
                     contactObj.setDateBlock(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
                     contactObj.setTimeBlock(new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
                     BlockcallData.Instance(mContext).add(contactObj);
+
+                    Intent broadcastIntent = new Intent();
+                    broadcastIntent.setAction(Constant.mBroadcastAction);
+                    broadcastIntent.putExtra("Data", "hello");
+                    mContext.sendBroadcast(broadcastIntent);
                 }
                 break;
         }

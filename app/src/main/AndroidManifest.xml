@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.ContactActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity android:name=".activity.SettingsActivity"
                           android:label="Setting"/>
         <activity android:name=".activity.MainActivity">

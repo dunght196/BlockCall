@@ -36,7 +36,6 @@ public class BlockcallTab extends Fragment {
     List<ContactObj> listBlock = new ArrayList<>();
     BlockcallAdapter blockcallAdapter;
     IntentFilter mIntentFilter;
-    MyBroadCastReceiver myBroadCastReceiver;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -45,7 +44,6 @@ public class BlockcallTab extends Fragment {
                 listBlock.clear();
                 listBlock.addAll( BlockcallData.Instance(context).getAllBlockCall());
                 blockcallAdapter.notifyDataSetChanged();
-                Log.d("broadcast",intent.getStringExtra("Data"));
             }
         }
     };
@@ -57,7 +55,6 @@ public class BlockcallTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blockcall);
         rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
-        myBroadCastReceiver = new MyBroadCastReceiver();
 
 
         listBlock.addAll( BlockcallData.Instance(getContext()).getAllBlockCall());
@@ -90,20 +87,6 @@ public class BlockcallTab extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(mReceiver);
-    }
-
-    class MyBroadCastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constant.mBroadcastAction)) {
-                listBlock.clear();
-                listBlock.addAll( BlockcallData.Instance(context).getAllBlockCall());
-                Log.e("test","size" + listBlock.size());
-                blockcallAdapter.notifyDataSetChanged();
-                Log.d("broadcast",intent.getStringExtra("Data"));
-            }
-        }
     }
 
 }
