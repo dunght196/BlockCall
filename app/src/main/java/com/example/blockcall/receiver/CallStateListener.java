@@ -1,4 +1,4 @@
-package com.example.blockcall;
+package com.example.blockcall.receiver;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +30,6 @@ public class CallStateListener extends PhoneStateListener {
                 // called when someone is ringing to this phone
                 if(AppUtil.isEnableBlock(mContext) && isBlacknumber(incomingNumber)){
                     AppUtil.endCall(mContext);
-
                     // Insert db Blockcall object
                     ContactObj contactObj = new ContactObj();
                     contactObj.setPhoneNum(incomingNumber);
@@ -38,10 +37,9 @@ public class CallStateListener extends PhoneStateListener {
                     contactObj.setDateBlock(new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()));
                     contactObj.setTimeBlock(new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
                     BlockcallData.Instance(mContext).add(contactObj);
-
+                    //Send action broadcast
                     Intent broadcastIntent = new Intent();
                     broadcastIntent.setAction(Constant.mBroadcastAction);
-                    broadcastIntent.putExtra("Data", "hello");
                     mContext.sendBroadcast(broadcastIntent);
                 }
                 break;

@@ -11,10 +11,9 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.example.blockcall.CallStateListener;
+import com.example.blockcall.receiver.CallStateListener;
 import com.example.blockcall.R;
 import com.example.blockcall.activity.MainActivity;
-import com.example.blockcall.utils.Constant;
 
 public class BlockCallService extends Service {
 
@@ -34,15 +33,6 @@ public class BlockCallService extends Service {
         mCallStateListener  = new CallStateListener (this);
         mTelephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         mTelephonyManager.listen(mCallStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(Constant.mBroadcastAction);
-        broadcastIntent.putExtra("Data", "hello");
-        sendBroadcast(broadcastIntent);
-        return START_REDELIVER_INTENT;
     }
 
     @Override

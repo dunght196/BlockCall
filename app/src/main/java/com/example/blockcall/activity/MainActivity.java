@@ -1,6 +1,7 @@
 package com.example.blockcall.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -55,5 +56,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void initPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        }
     }
 }

@@ -46,6 +46,16 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
 
+        listContact.addAll(getListContacts());
+
+        for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
+            for(ContactObj c2 : listContact ) {
+                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+                    listContact.remove(c2);
+                    break;
+                }
+            }
+        }
 
         listIndex = new Boolean[listContact.size()];
         for(int i=0; i<listIndex.length; i++) {
@@ -76,22 +86,6 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
                 startActivity(new Intent(ContactActivity.this, MainActivity.class));
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        listContact.addAll(getListContacts());
-        // Remove contact contain listBlack
-        for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
-            for(ContactObj c2 : listContact ) {
-                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
-                    listContact.remove(c2);
-                    break;
-                }
-            }
-        }
-        contactAdapter.notifyDataSetChanged();
     }
 
     private List<ContactObj> getListContacts() {
