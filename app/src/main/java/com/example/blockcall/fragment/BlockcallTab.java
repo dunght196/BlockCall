@@ -55,7 +55,8 @@ public class BlockcallTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blockcall);
         rvBlockcall = rootView.findViewById(R.id.rv_blockcall);
-
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Constant.mBroadcastAction);
 
         listBlock.addAll( BlockcallData.Instance(getContext()).getAllBlockCall());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -78,8 +79,6 @@ public class BlockcallTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Constant.mBroadcastAction);
         getActivity().registerReceiver(mReceiver, mIntentFilter);
     }
 

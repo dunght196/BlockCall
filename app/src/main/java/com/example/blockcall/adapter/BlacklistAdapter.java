@@ -19,10 +19,10 @@ import java.util.List;
 
 public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyViewHolder> {
 
-    List<ContactObj> listBlack;
-    Context context;
+    private List<ContactObj> listBlack;
+    private Context context;
     private static OnItemClickListener listener;
-    SparseBooleanArray selectedItems;
+    private SparseBooleanArray selectedItems;
 
 
     public interface OnItemClickListener {
@@ -49,7 +49,6 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvName.setText(listBlack.get(i).getUserName());
         myViewHolder.tvPhone.setText(listBlack.get(i).getPhoneNum());
-//        myViewHolder.itemView.setActivated(selectedItems.get(i, false));
     }
 
     @Override

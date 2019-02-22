@@ -22,14 +22,24 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHolder> {
 
-    List<ContactObj> listContact;
-    Context context;
-    ItemClickListener itemClickListener;
+    private List<ContactObj> listContact;
+    private Context context;
+//    private ItemClickListener itemClickListener;
+    private static OnCheckboxClickListener checkboxClickListener;
 
-    public ContactAdapter(List<ContactObj> listContact, Context context, ItemClickListener itemClickListener) {
+    public ContactAdapter(List<ContactObj> listContact, Context context) {
         this.listContact = listContact;
         this.context = context;
-        this.itemClickListener = itemClickListener;
+//        this.itemClickListener = itemClickListener;
+    }
+
+    public interface OnCheckboxClickListener {
+        void onCheckClick(int position);
+        void onUncheckClick(int position);
+    }
+
+    public void setCheckboxClickListener(OnCheckboxClickListener checkboxClickListener) {
+        this.checkboxClickListener = checkboxClickListener;
     }
 
     @NonNull
@@ -49,9 +59,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    itemClickListener.onCheckClick(i);
+                    checkboxClickListener.onCheckClick(i);
                 }else {
-                    itemClickListener.onUncheckClick(i);
+                    checkboxClickListener.onUncheckClick(i);
                 }
             }
         });

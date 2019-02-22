@@ -53,7 +53,6 @@ public class BlacklistTab extends Fragment {
     ActionMode mActionMode;
     int pos = -1;
     DatabaseReference mDatabase;
-    IntentFilter mIntentFilter;
     ActionMode.Callback modeCallBack = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
