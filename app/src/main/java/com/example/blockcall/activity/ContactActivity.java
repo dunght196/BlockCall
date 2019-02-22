@@ -4,26 +4,19 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
-
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.ContactAdapter;
-import com.example.blockcall.controller.ItemClickListener;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ContactActivity extends AppCompatActivity {
