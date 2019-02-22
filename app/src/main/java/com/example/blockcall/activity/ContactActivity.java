@@ -82,8 +82,8 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
                         BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
                     }
                 }
-
                 startActivity(new Intent(ContactActivity.this, MainActivity.class));
+                finish();
             }
         });
     }

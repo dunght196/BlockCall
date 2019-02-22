@@ -112,7 +112,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
         return listItem;
     }
 
-    public void deleteSelectedItem() {
+    public void clearSelectedItems() {
         selectedItems.clear();
         notifyDataSetChanged();
     }

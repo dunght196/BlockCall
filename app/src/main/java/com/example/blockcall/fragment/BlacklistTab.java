@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -70,11 +71,14 @@ public class BlacklistTab extends Fragment {
             switch (item.getItemId()) {
                 case R.id.action_delete:
                     for(Integer value : blacklistAdapter.getPositionItem()) {
-                        BlacklistData.Instance(getContext()).delete(listBlack.get(pos));
-                        listBlack.remove(pos);
+                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                        listBlack.remove(value);
                     }
-                    blacklistAdapter.notifyDataSetChanged();
                     mActionMode.finish();
+                    blacklistAdapter.clearSelectedItems();
+                    // Refresh fragment
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
                     return true;
                 case R.id.action_edit:
                     final Dialog dialog = new Dialog(getActivity());
@@ -94,7 +98,9 @@ public class BlacklistTab extends Fragment {
                             contactObj.setUserName(edtName.getText().toString());
                             contactObj.setPhoneNum(edtPhone.getText().toString());
                             BlacklistData.Instance(getContext()).update(contactObj);
-                            startActivity(new Intent(getActivity(), MainActivity.class));
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                            dialog.cancel();
                         }
                     });
                     tvCancel.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +113,7 @@ public class BlacklistTab extends Fragment {
                     dialog.show();
                     return true;
                 default:
-                    return false;
+                    return true;
             }
         }
 
