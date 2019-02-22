@@ -26,9 +26,8 @@ import java.util.List;
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     private SwitchPreference swBlockcall, swSynchornize;
-    List<ContactObj> listBlack;
-    DatabaseReference mDatabase;
-    IntentFilter mIntentFilter;
+    private List<ContactObj> listBlack;
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         swSynchornize = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swBlockcall.setOnPreferenceChangeListener(this);
         swSynchornize.setOnPreferenceChangeListener(this);
-
     }
 
 

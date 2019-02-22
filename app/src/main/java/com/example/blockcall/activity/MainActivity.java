@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTablayout;
     private ViewPager viewPager;
 
-    DatabaseReference databaseReference;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +39,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(tabAdapter);
         mTablayout.setupWithViewPager(viewPager);
 
-        BlacklistData.Instance(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

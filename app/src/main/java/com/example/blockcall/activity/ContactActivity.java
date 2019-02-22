@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -25,15 +26,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContactActivity extends AppCompatActivity implements ItemClickListener {
+public class ContactActivity extends AppCompatActivity {
 
-    RecyclerView rvContact;
-    List<ContactObj> listContact = new ArrayList<>();
-    ContactAdapter contactAdapter;
-    Toolbar toolbar;
-    ContentResolver contentResolver;
-    Boolean[] listIndex;
-    ImageView ivBack, ivDone;
+    private RecyclerView rvContact;
+    private List<ContactObj> listContact = new ArrayList<>();
+    private ContactAdapter contactAdapter;
+    private Toolbar toolbar;
+    private SparseBooleanArray listIndex = new SparseBooleanArray();
+    private ImageView ivBack, ivDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
 
         listContact.addAll(getListContacts());
 
+        // Delete contact selected
         for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
             for(ContactObj c2 : listContact ) {
                 if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
@@ -56,16 +57,22 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
                 }
             }
         }
-
-        listIndex = new Boolean[listContact.size()];
-        for(int i=0; i<listIndex.length; i++) {
-            listIndex[i] = false;
-        }
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
-        contactAdapter = new ContactAdapter(listContact, ContactActivity.this, this);
+        contactAdapter = new ContactAdapter(listContact, ContactActivity.this);
         rvContact.setAdapter(contactAdapter);
+
+        contactAdapter.setCheckboxClickListener(new ContactAdapter.OnCheckboxClickListener() {
+            @Override
+            public void onCheckClick(int position) {
+                listIndex.put(position,true);
+            }
+
+            @Override
+            public void onUncheckClick(int position) {
+                listIndex.put(position,false);
+            }
+        });
 
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,13 +84,13 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         ivDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int i=0; i<listIndex.length; i++) {
-                    if(listIndex[i] == true) {
+                for(int i=0; i<listIndex.size(); i++) {
+                    if(listIndex.get(i)) {
                         BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
                     }
                 }
                 startActivity(new Intent(ContactActivity.this, MainActivity.class));
-                finish();
+                onBackPressed();
             }
         });
     }
@@ -119,15 +126,5 @@ public class ContactActivity extends AppCompatActivity implements ItemClickListe
         }
 
         return listData;
-    }
-
-    @Override
-    public void onCheckClick(int position) {
-        listIndex[position] = true;
-    }
-
-    @Override
-    public void onUncheckClick(int position) {
-        listIndex[position] = false;
     }
 }

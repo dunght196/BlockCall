@@ -24,13 +24,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
 
     private List<ContactObj> listContact;
     private Context context;
-//    private ItemClickListener itemClickListener;
     private static OnCheckboxClickListener checkboxClickListener;
 
     public ContactAdapter(List<ContactObj> listContact, Context context) {
         this.listContact = listContact;
         this.context = context;
-//        this.itemClickListener = itemClickListener;
     }
 
     public interface OnCheckboxClickListener {
@@ -65,9 +63,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
                 }
             }
         });
-
-
-
     }
 
     @Override

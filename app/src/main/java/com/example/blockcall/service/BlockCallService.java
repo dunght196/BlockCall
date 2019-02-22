@@ -17,8 +17,8 @@ import com.example.blockcall.activity.MainActivity;
 
 public class BlockCallService extends Service {
 
-    CallStateListener mCallStateListener;
-    TelephonyManager mTelephonyManager;
+    private CallStateListener mCallStateListener;
+    private TelephonyManager mTelephonyManager;
 
     @Override
     public IBinder onBind(Intent intent) {

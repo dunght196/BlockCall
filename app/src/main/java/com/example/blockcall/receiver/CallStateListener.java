@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 public class CallStateListener extends PhoneStateListener {
 
-    Context mContext;
+    private Context mContext;
 
     public CallStateListener(Context context) {
         this.mContext = context;

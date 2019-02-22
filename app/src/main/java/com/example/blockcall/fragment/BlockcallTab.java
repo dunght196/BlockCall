@@ -31,11 +31,11 @@ import java.util.List;
 
 public class BlockcallTab extends Fragment {
 
-    FloatingActionButton fab;
-    RecyclerView rvBlockcall;
-    List<ContactObj> listBlock = new ArrayList<>();
-    BlockcallAdapter blockcallAdapter;
-    IntentFilter mIntentFilter;
+    private FloatingActionButton fab;
+    private RecyclerView rvBlockcall;
+    private List<ContactObj> listBlock = new ArrayList<>();
+    private BlockcallAdapter blockcallAdapter;
+    private IntentFilter mIntentFilter;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override

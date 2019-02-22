@@ -2,10 +2,8 @@ package com.example.blockcall.fragment;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,8 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,12 +29,10 @@ import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
-import com.example.blockcall.utils.Constant;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -46,13 +40,13 @@ import java.util.List;
 
 public class BlacklistTab extends Fragment {
 
-    FloatingActionButton fab;
-    RecyclerView rvBlacklist;
-    List<ContactObj> listBlack = new ArrayList<>();
-    BlacklistAdapter blacklistAdapter;
-    ActionMode mActionMode;
-    int pos = -1;
-    DatabaseReference mDatabase;
+    private FloatingActionButton fab;
+    private RecyclerView rvBlacklist;
+    private List<ContactObj> listBlack = new ArrayList<>();
+    private BlacklistAdapter blacklistAdapter;
+    private ActionMode mActionMode;
+    private int positionSeleceted = -1;
+    private DatabaseReference mDatabase;
     ActionMode.Callback modeCallBack = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -88,12 +82,12 @@ public class BlacklistTab extends Fragment {
                     final EditText edtPhone = (EditText) dialog.findViewById(R.id.edt_edit_phone);
                     TextView tvOK = (TextView) dialog.findViewById(R.id.tv_edit_ok);
                     TextView tvCancel = (TextView) dialog.findViewById(R.id.tv_edit_cancel);
-                    edtName.setText(listBlack.get(pos).getUserName());
-                    edtPhone.setText(listBlack.get(pos).getPhoneNum());
+                    edtName.setText(listBlack.get(positionSeleceted).getUserName());
+                    edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
                     tvOK.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ContactObj contactObj = listBlack.get(pos);
+                            ContactObj contactObj = listBlack.get(positionSeleceted);
                             contactObj.setUserName(edtName.getText().toString());
                             contactObj.setPhoneNum(edtPhone.getText().toString());
                             BlacklistData.Instance(getContext()).update(contactObj);
@@ -139,7 +133,7 @@ public class BlacklistTab extends Fragment {
         blacklistAdapter.setOnItemClickListener(new BlacklistAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
-                pos = position;
+                positionSeleceted = position;
                 enableActionMode(itemView,position);
             }
         });

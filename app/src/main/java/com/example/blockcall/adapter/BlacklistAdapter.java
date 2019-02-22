@@ -22,7 +22,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     private List<ContactObj> listBlack;
     private Context context;
     private static OnItemClickListener listener;
-    private SparseBooleanArray selectedItems;
+    private SparseBooleanArray selectedItems = new SparseBooleanArray();
 
 
     public interface OnItemClickListener {
@@ -33,7 +33,6 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
     public BlacklistAdapter(List<ContactObj> listContact, Context context) {
         this.listBlack = listContact;
         this.context = context;
-        selectedItems = new SparseBooleanArray();
     }
 
     @NonNull

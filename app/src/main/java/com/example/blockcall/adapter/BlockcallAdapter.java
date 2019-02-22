@@ -16,8 +16,8 @@ import java.util.List;
 
 public class BlockcallAdapter extends RecyclerView.Adapter<BlockcallAdapter.MyViewHolder> {
 
-    List<ContactObj> listBlock;
-    Context context;
+    private List<ContactObj> listBlock;
+    private Context context;
 
     public BlockcallAdapter(List<ContactObj> listBlock, Context context) {
         this.listBlock = listBlock;
