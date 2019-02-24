@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -22,12 +23,13 @@ import com.example.blockcall.utils.Constant;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener {
 
     private SwitchPreference swBlockcall, swSynchornize;
-    private List<ContactObj> listBlack;
+    private List<ContactObj> listBlack = new ArrayList<>();
     private DatabaseReference mDatabase;
 
     @Override
@@ -39,6 +41,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         swSynchornize = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swBlockcall.setOnPreferenceChangeListener(this);
         swSynchornize.setOnPreferenceChangeListener(this);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
     }
 
 
@@ -49,13 +53,16 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             AppUtil.setEnableBlock(getActivity(),!enableValue);
             AppUtil.enableService(getActivity(),!enableValue);
         }else if(preference == swSynchornize) {
-            listBlack = BlacklistData.Instance(getActivity()).getAllBlacklist();
             Boolean isCheck = (Boolean)newValue;
+            listBlack = BlacklistData.Instance(getActivity()).getAllBlacklist();
             if (isCheck) {
-                mDatabase = FirebaseDatabase.getInstance().getReference("contacts");
-                String contactID = mDatabase.push().getKey();
-                for(ContactObj c : listBlack) {
-                    mDatabase.child(contactID).setValue(c);
+                listBlack.addAll(BlacklistData.Instance(getActivity()).getAllBlacklist());
+                String account = AppUtil.getAccount(getActivity(),"");
+                if(!account.equals("")) {
+                    String contactID = mDatabase.push().getKey();
+                    for(ContactObj c : listBlack) {
+                        mDatabase.child(account).child(contactID).setValue(c);
+                    }
                 }
                 AppUtil.setEnableSyn(getActivity(), isCheck);
             }else {

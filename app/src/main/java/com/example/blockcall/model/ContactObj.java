@@ -11,6 +11,9 @@ public class ContactObj {
     private String dateBlock;
     private String timeBlock;
 
+    public ContactObj() {
+    }
+
     public int getId() {
         return id;
     }

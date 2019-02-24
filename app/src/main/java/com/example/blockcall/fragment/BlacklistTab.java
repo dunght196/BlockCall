@@ -109,11 +109,6 @@ public class BlacklistTab extends Fragment {
                     dialog.show();
                     return true;
                 case android.R.id.home:
-                    Toast.makeText(getActivity(), "aaa",Toast.LENGTH_SHORT).show();
-//                    blacklistAdapter.clearSelectedItems();
-//                    FragmentTransaction f = getFragmentManager().beginTransaction();
-//                    f.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
-
                     mActionMode.finish();
                     return true;
                 default:
@@ -219,7 +214,11 @@ public class BlacklistTab extends Fragment {
                         tvOK.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
+                                String account = edtAccount.getText().toString();
+                                AppUtil.setAccount(getContext(), account);
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                                dialogAccount.cancel();
                             }
                         });
 
@@ -265,29 +264,30 @@ public class BlacklistTab extends Fragment {
         super.onResume();
         boolean enableValue = AppUtil.isEnableBlock(getActivity());
         AppUtil.enableService(getActivity(),enableValue);
-        mDatabase = FirebaseDatabase.getInstance().getReference("contacts");
-        boolean checkSw = AppUtil.isEnableSyn(getContext());
-        if (checkSw) {
-            mDatabase.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    listBlack.clear();
-                    BlacklistData.Instance(getContext()).deleteAll();
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-                        listBlack.add(contactObj);
-                        // save db
-                        BlacklistData.Instance(getContext()).add(contactObj);
+        boolean checkSwSyn = AppUtil.isEnableSyn(getContext());
+        if (checkSwSyn) {
+            String account = AppUtil.getAccount(getContext(),"");
+            if(!account.equals("")) {
+                mDatabase = FirebaseDatabase.getInstance().getReference(account);
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        listBlack.clear();
+                        BlacklistData.Instance(getContext()).deleteAll();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
+                            listBlack.add(contactObj);
+                            // save db
+                            BlacklistData.Instance(getContext()).add(contactObj);
+                        }
+                        blacklistAdapter.notifyDataSetChanged();
                     }
 
-                    blacklistAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
         } else {
             listBlack.clear();
             listBlack.addAll(BlacklistData.Instance(getContext()).getAllBlacklist());
