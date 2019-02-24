@@ -158,6 +158,7 @@ public class BlacklistTab extends Fragment {
                 dialog.setContentView(R.layout.dialog_add_blacklist);
                 LinearLayout llFromContact = (LinearLayout) dialog.findViewById(R.id.ll_from_contact);
                 LinearLayout llFromNumber = (LinearLayout) dialog.findViewById(R.id.ll_from_number);
+                LinearLayout llFromAccount = (LinearLayout) dialog.findViewById(R.id.ll_from_account);
                 dialog.show();
 
                 llFromContact.setOnClickListener(new View.OnClickListener() {
@@ -171,14 +172,14 @@ public class BlacklistTab extends Fragment {
                 llFromNumber.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final Dialog dialog1 = new Dialog(getActivity());
-                        dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog1.setContentView(R.layout.dialog_input_number);
-                        final EditText edtName = (EditText) dialog1.findViewById(R.id.edt_name);
-                        final EditText edtPhone = (EditText) dialog1.findViewById(R.id.edt_phone);
-                        TextView tvOK = (TextView) dialog1.findViewById(R.id.tv_ok);
-                        TextView tvCancel = (TextView) dialog1.findViewById(R.id.tv_cancel);
-                        dialog1.show();
+                        final Dialog dialogNumber = new Dialog(getActivity());
+                        dialogNumber.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialogNumber.setContentView(R.layout.dialog_input_number);
+                        final EditText edtName = (EditText) dialogNumber.findViewById(R.id.edt_name);
+                        final EditText edtPhone = (EditText) dialogNumber.findViewById(R.id.edt_phone);
+                        TextView tvOK = (TextView) dialogNumber.findViewById(R.id.tv_ok);
+                        TextView tvCancel = (TextView) dialogNumber.findViewById(R.id.tv_cancel);
+                        dialogNumber.show();
                         dialog.cancel();
 
                         tvOK.setOnClickListener(new View.OnClickListener() {
@@ -195,11 +196,39 @@ public class BlacklistTab extends Fragment {
                         tvCancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                dialog1.cancel();
+                                dialogNumber.cancel();
                             }
                         });
 
 
+                    }
+                });
+
+                llFromAccount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Dialog dialogAccount = new Dialog(getActivity());
+                        dialogAccount.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialogAccount.setContentView(R.layout.dialog_input_account);
+                        final EditText edtAccount = (EditText) dialogAccount.findViewById(R.id.edt_account);
+                        TextView tvOK = (TextView) dialogAccount.findViewById(R.id.tv_ok_account);
+                        TextView tvCancel = (TextView) dialogAccount.findViewById(R.id.tv_cancel_account);
+                        dialogAccount.show();
+                        dialog.cancel();
+
+                        tvOK.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        });
+
+                        tvCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogAccount.cancel();
+                            }
+                        });
                     }
                 });
             }

@@ -8,6 +8,8 @@ public class Constant {
 
     public static final String ENABLE_KEY_SYN = "enable_key_syn";
 
+    public static final String ACCOUNT_SYN = "account_syn";
+
     public static final String mBroadcastAction = "STRING_BROADCAST_ACTION";
 
 }
