@@ -1,8 +1,10 @@
 package com.example.blockcall.activity;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,17 +41,6 @@ public class ContactActivity extends AppCompatActivity {
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
 
-        listContact.addAll(getListContacts());
-
-        // Delete contact selected
-        for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
-            for(ContactObj c2 : listContact ) {
-                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
-                    listContact.remove(c2);
-                    break;
-                }
-            }
-        }
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
         contactAdapter = new ContactAdapter(listContact, ContactActivity.this);
@@ -70,22 +61,43 @@ public class ContactActivity extends AppCompatActivity {
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(ContactActivity.this, MainActivity.class));
+                onBackPressed();
             }
         });
 
         ivDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // get key form listIndex
+                List<Integer> listItem = new ArrayList<>();
                 for(int i=0; i<listIndex.size(); i++) {
+                    listItem.add(listIndex.keyAt(i));
+                }
+                for(Integer i : listItem) {
                     if(listIndex.get(i)) {
                         BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
                     }
                 }
                 startActivity(new Intent(ContactActivity.this, MainActivity.class));
-                onBackPressed();
+                finishAffinity();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        listContact.addAll(getListContacts());
+        // Delete contact selected
+        for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
+            for(ContactObj c2 : listContact ) {
+                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+                    listContact.remove(c2);
+                    break;
+                }
+            }
+        }
+        contactAdapter.notifyDataSetChanged();
     }
 
     private List<ContactObj> getListContacts() {
@@ -119,5 +131,12 @@ public class ContactActivity extends AppCompatActivity {
         }
 
         return listData;
+    }
+
+    public void initPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //Register permission
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
+        }
     }
 }

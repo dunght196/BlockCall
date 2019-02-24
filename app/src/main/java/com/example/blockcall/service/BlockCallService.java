@@ -58,7 +58,7 @@ public class BlockCallService extends Service {
         }
         NotificationCompat.Builder mBuilder = new  NotificationCompat.Builder(this,"10001");
         mBuilder.setSmallIcon(R.drawable.ic_block);
-        mBuilder.setContentTitle("Đang bật chặn cuộc gọi")
+        mBuilder.setContentTitle("Call blocking is on")
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setChannelId("10001")

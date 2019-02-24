@@ -1,8 +1,10 @@
 package com.example.blockcall.fragment;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.blockcall.R;
 import com.example.blockcall.activity.ContactActivity;
@@ -105,8 +108,16 @@ public class BlacklistTab extends Fragment {
                     });
                     dialog.show();
                     return true;
-                default:
+                case android.R.id.home:
+                    Toast.makeText(getActivity(), "aaa",Toast.LENGTH_SHORT).show();
+//                    blacklistAdapter.clearSelectedItems();
+//                    FragmentTransaction f = getFragmentManager().beginTransaction();
+//                    f.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+
+                    mActionMode.finish();
                     return true;
+                default:
+                    return false;
             }
         }
 

@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -62,9 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public void initPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //Register permission
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE}, 1);
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
         }
     }
-
-
 }

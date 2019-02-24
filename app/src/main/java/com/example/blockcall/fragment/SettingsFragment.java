@@ -1,5 +1,6 @@
 package com.example.blockcall.fragment;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -44,6 +45,9 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if(preference == swBlockcall) {
             boolean enableValue =  AppUtil.isEnableBlock(getActivity());
+            if (enableValue) {
+                initPermission();
+            }
             AppUtil.setEnableBlock(getActivity(),!enableValue);
             AppUtil.enableService(getActivity(),!enableValue);
         }else if(preference == swSynchornize) {
@@ -62,5 +66,12 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         }
         return true;
+    }
+
+    public void initPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //Register permission
+            requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE}, 1);
+        }
     }
 }
