@@ -22,6 +22,14 @@ public class AppUtil {
         PrefUtil.setBoolean(context,Constant.ENABLE_KEY_SYN,value);
     }
 
+    public static void setAccount(Context context, String value){
+        PrefUtil.setString(context,Constant.ACCOUNT_SYN,value);
+    }
+
+    public static String getAccount(Context context, String defaultVlaue){
+        return PrefUtil.getString(context,Constant.ACCOUNT_SYN,defaultVlaue);
+    }
+
     public static boolean isEnableBlock(Context context){
         return PrefUtil.getBoolean(context,Constant.ENABLE_KEY_BLOCK,false);
     }

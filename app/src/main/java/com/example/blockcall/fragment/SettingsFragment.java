@@ -33,6 +33,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initPermission();
         addPreferencesFromResource(R.xml.pref_main);
         swBlockcall = (SwitchPreference) getPreferenceScreen().findPreference("key_block");
         swSynchornize = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
@@ -45,9 +46,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if(preference == swBlockcall) {
             boolean enableValue =  AppUtil.isEnableBlock(getActivity());
-            if (enableValue) {
-                initPermission();
-            }
             AppUtil.setEnableBlock(getActivity(),!enableValue);
             AppUtil.enableService(getActivity(),!enableValue);
         }else if(preference == swSynchornize) {

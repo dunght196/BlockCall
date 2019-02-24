@@ -13,9 +13,21 @@ public class PrefUtil {
         editor.putBoolean(name, value);
         editor.apply();
     }
+
+    public static void setString(Context context, String name, String value){
+        SharedPreferences.Editor editor = context.getSharedPreferences(APP_PREF_NAME, MODE_PRIVATE).edit();
+        editor.putString(name, value);
+        editor.apply();
+    }
+
     public static boolean getBoolean(Context context, String name, boolean defaultValue){
         SharedPreferences sp = context.getSharedPreferences(APP_PREF_NAME, MODE_PRIVATE);
         return sp.getBoolean(name, defaultValue);
+    }
+
+    public static String getString(Context context, String name, String defaultValue){
+        SharedPreferences sp = context.getSharedPreferences(APP_PREF_NAME, MODE_PRIVATE);
+        return sp.getString(name, defaultValue);
     }
 
 
