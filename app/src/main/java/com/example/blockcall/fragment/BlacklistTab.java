@@ -83,7 +83,6 @@ public class BlacklistTab extends Fragment {
                 dialog.setContentView(R.layout.dialog_add_blacklist);
                 LinearLayout llFromContact = (LinearLayout) dialog.findViewById(R.id.ll_from_contact);
                 LinearLayout llFromNumber = (LinearLayout) dialog.findViewById(R.id.ll_from_number);
-                LinearLayout llFromAccount = (LinearLayout) dialog.findViewById(R.id.ll_from_account);
                 dialog.show();
 
                 llFromContact.setOnClickListener(new View.OnClickListener() {
@@ -128,38 +127,6 @@ public class BlacklistTab extends Fragment {
 
                     }
                 });
-
-                llFromAccount.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        final Dialog dialogAccount = new Dialog(getActivity());
-                        dialogAccount.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogAccount.setContentView(R.layout.dialog_input_account);
-                        final EditText edtAccount = (EditText) dialogAccount.findViewById(R.id.edt_account);
-                        TextView tvOK = (TextView) dialogAccount.findViewById(R.id.tv_ok_account);
-                        TextView tvCancel = (TextView) dialogAccount.findViewById(R.id.tv_cancel_account);
-                        dialogAccount.show();
-                        dialog.cancel();
-
-                        tvOK.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                String account = edtAccount.getText().toString();
-                                AppUtil.setAccount(getContext(), account);
-                                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
-                                dialogAccount.cancel();
-                            }
-                        });
-
-                        tvCancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dialogAccount.cancel();
-                            }
-                        });
-                    }
-                });
             }
         });
 
@@ -180,12 +147,12 @@ public class BlacklistTab extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         listBlack.clear();
-                        BlacklistData.Instance(getContext()).deleteAll();
+//                        BlacklistData.Instance(getContext()).deleteAll();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
                             listBlack.add(contactObj);
                             // save db
-                            BlacklistData.Instance(getContext()).add(contactObj);
+//                            BlacklistData.Instance(getContext()).add(contactObj);
                         }
                         blacklistAdapter.notifyDataSetChanged();
                     }

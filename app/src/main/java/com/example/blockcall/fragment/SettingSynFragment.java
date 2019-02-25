@@ -30,7 +30,6 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
         addPreferencesFromResource(R.xml.pref_account);
         swSynContact = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swSynContact.setOnPreferenceChangeListener(this);
-//        account = AppUtil.getAccount(getActivity(),"");
         mDatabase = FirebaseDatabase.getInstance().getReference(account);
     }
 
