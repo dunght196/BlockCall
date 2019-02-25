@@ -6,9 +6,10 @@
     android:key="@string/key_block_call"
     android:title="@string/title_block_call" />
 
-    <SwitchPreference
-    android:defaultValue="false"
-    android:key="@string/key_syn"
-    android:title="@string/title_syn" />
+    <Preference
+        android:dialogTitle="Account"
+        android:key="account"
+        android:summary="Google"
+        android:title="dunght" />
 
 </PreferenceScreen>

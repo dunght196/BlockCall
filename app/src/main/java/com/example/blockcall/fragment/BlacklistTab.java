@@ -47,80 +47,10 @@ public class BlacklistTab extends Fragment {
     private RecyclerView rvBlacklist;
     private List<ContactObj> listBlack = new ArrayList<>();
     private BlacklistAdapter blacklistAdapter;
+    private ActionModeCallback modeCallback;
     private ActionMode mActionMode;
     private int positionSeleceted = -1;
     private DatabaseReference mDatabase;
-    ActionMode.Callback modeCallBack = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_delete:
-                    for(Integer value : blacklistAdapter.getPositionItem()) {
-                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
-                        listBlack.remove(value);
-                    }
-                    mode.finish();
-                    blacklistAdapter.clearSelectedItems();
-                    // Refresh fragment
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
-                    return true;
-                case R.id.action_edit:
-                    final Dialog dialog = new Dialog(getActivity());
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.dialog_edit_item_black);
-
-                    final EditText edtName = (EditText) dialog.findViewById(R.id.edt_edit_name);
-                    final EditText edtPhone = (EditText) dialog.findViewById(R.id.edt_edit_phone);
-                    TextView tvOK = (TextView) dialog.findViewById(R.id.tv_edit_ok);
-                    TextView tvCancel = (TextView) dialog.findViewById(R.id.tv_edit_cancel);
-                    edtName.setText(listBlack.get(positionSeleceted).getUserName());
-                    edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
-                    tvOK.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ContactObj contactObj = listBlack.get(positionSeleceted);
-                            contactObj.setUserName(edtName.getText().toString());
-                            contactObj.setPhoneNum(edtPhone.getText().toString());
-                            BlacklistData.Instance(getContext()).update(contactObj);
-                            FragmentTransaction ft = getFragmentManager().beginTransaction();
-                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
-                            dialog.cancel();
-                        }
-                    });
-                    tvCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.cancel();
-                            mActionMode.finish();
-                        }
-                    });
-                    dialog.show();
-                    mode.finish();
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            blacklistAdapter.clearSelectedItems();
-            mActionMode = null;
-        }
-    };
 
     @Nullable
     @Override
@@ -130,9 +60,9 @@ public class BlacklistTab extends Fragment {
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
 
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvBlacklist.setLayoutManager(mLayoutManager);
+        modeCallback = new ActionModeCallback();
         blacklistAdapter = new BlacklistAdapter(listBlack, getContext());
         rvBlacklist.setAdapter(blacklistAdapter);
 
@@ -236,31 +166,6 @@ public class BlacklistTab extends Fragment {
         return rootView;
     }
 
-    public void enableActionMode(View itemView, int position) {
-        if(mActionMode == null) {
-            mActionMode = getActivity().startActionMode(modeCallBack);
-//            itemView.setSelected(true);
-            toggleSelection(itemView,position);
-        }
-    }
-
-    public void toggleSelection(View itemView, int position) {
-        blacklistAdapter.toggleSelection(itemView,position);
-        int count = blacklistAdapter.getSelectedItemCount();
-        if(count == 0) {
-            itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
-            mActionMode.finish();
-            mActionMode = null;
-        }else {
-            if(count > 1) {
-                MenuItem menuItem = mActionMode.getMenu().findItem(R.id.action_edit);
-                menuItem.setVisible(false);
-            }
-            mActionMode.setTitle(String.valueOf(count));
-            mActionMode.invalidate();
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -296,4 +201,106 @@ public class BlacklistTab extends Fragment {
             blacklistAdapter.notifyDataSetChanged();
         }
     }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    for(Integer value : blacklistAdapter.getPositionItem()) {
+                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                        listBlack.remove(value);
+                    }
+                    mode.finish();
+                    blacklistAdapter.clearSelectedItems();
+                    // Refresh fragment
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                    return true;
+                case R.id.action_edit:
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_edit_item_black);
+
+                    final EditText edtName = (EditText) dialog.findViewById(R.id.edt_edit_name);
+                    final EditText edtPhone = (EditText) dialog.findViewById(R.id.edt_edit_phone);
+                    TextView tvOK = (TextView) dialog.findViewById(R.id.tv_edit_ok);
+                    TextView tvCancel = (TextView) dialog.findViewById(R.id.tv_edit_cancel);
+                    edtName.setText(listBlack.get(positionSeleceted).getUserName());
+                    edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
+                    tvOK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ContactObj contactObj = listBlack.get(positionSeleceted);
+                            contactObj.setUserName(edtName.getText().toString());
+                            contactObj.setPhoneNum(edtPhone.getText().toString());
+                            BlacklistData.Instance(getContext()).update(contactObj);
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                            dialog.cancel();
+                        }
+                    });
+                    tvCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.cancel();
+                            mActionMode.finish();
+                        }
+                    });
+                    dialog.show();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            blacklistAdapter.clearSelectedItems();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+            mActionMode = null;
+        }
+    };
+
+    public void enableActionMode(View itemView, int position) {
+        if(mActionMode == null) {
+            mActionMode = getActivity().startActionMode(modeCallback);
+            itemView.setSelected(true);
+        }
+        toggleSelection(itemView,position);
+
+    }
+
+    public void toggleSelection(View itemView, int position) {
+        blacklistAdapter.toggleSelection(itemView,position);
+        int count = blacklistAdapter.getSelectedItemCount();
+        if(count == 0) {
+            itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
+            mActionMode.finish();
+            mActionMode = null;
+        }else {
+            if(count > 1) {
+                MenuItem menuItem = mActionMode.getMenu().findItem(R.id.action_edit);
+                menuItem.setVisible(false);
+            }
+            mActionMode.setTitle(String.valueOf(count));
+            mActionMode.invalidate();
+        }
+    }
+
+
 }
