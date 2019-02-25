@@ -70,7 +70,7 @@ public class BlacklistTab extends Fragment {
                         BlacklistData.Instance(getContext()).delete(listBlack.get(value));
                         listBlack.remove(value);
                     }
-                    mActionMode.finish();
+                    mode.finish();
                     blacklistAdapter.clearSelectedItems();
                     // Refresh fragment
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -107,10 +107,9 @@ public class BlacklistTab extends Fragment {
                         }
                     });
                     dialog.show();
+                    mode.finish();
                     return true;
-                case android.R.id.home:
-                    mActionMode.finish();
-                    return true;
+
                 default:
                     return false;
             }
@@ -118,6 +117,7 @@ public class BlacklistTab extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
+            blacklistAdapter.clearSelectedItems();
             mActionMode = null;
         }
     };
@@ -237,9 +237,11 @@ public class BlacklistTab extends Fragment {
     }
 
     public void enableActionMode(View itemView, int position) {
-        mActionMode = getActivity().startActionMode(modeCallBack);
-        itemView.setSelected(true);
-        toggleSelection(itemView,position);
+        if(mActionMode == null) {
+            mActionMode = getActivity().startActionMode(modeCallBack);
+//            itemView.setSelected(true);
+            toggleSelection(itemView,position);
+        }
     }
 
     public void toggleSelection(View itemView, int position) {

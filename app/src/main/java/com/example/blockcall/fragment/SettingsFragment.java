@@ -1,25 +1,17 @@
 package com.example.blockcall.fragment;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.app.FragmentTransaction;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.util.Log;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import com.example.blockcall.R;
-import com.example.blockcall.activity.MainActivity;
-import com.example.blockcall.activity.SettingsActivity;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.model.ContactObj;
-import com.example.blockcall.service.BlockCallService;
 import com.example.blockcall.utils.AppUtil;
-import com.example.blockcall.utils.Constant;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,6 +23,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private SwitchPreference swBlockcall, swSynchornize;
     private List<ContactObj> listBlack = new ArrayList<>();
     private DatabaseReference mDatabase;
+    private String account;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,10 +34,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         swSynchornize = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swBlockcall.setOnPreferenceChangeListener(this);
         swSynchornize.setOnPreferenceChangeListener(this);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        account = AppUtil.getAccount(getActivity(),"");
+        mDatabase = FirebaseDatabase.getInstance().getReference(account);
     }
-
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -53,20 +46,19 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             AppUtil.setEnableBlock(getActivity(),!enableValue);
             AppUtil.enableService(getActivity(),!enableValue);
         }else if(preference == swSynchornize) {
+            listBlack.clear();
+            listBlack.addAll(BlacklistData.Instance(getActivity()).getAllBlacklist());
             Boolean isCheck = (Boolean)newValue;
-            listBlack = BlacklistData.Instance(getActivity()).getAllBlacklist();
             if (isCheck) {
-                listBlack.addAll(BlacklistData.Instance(getActivity()).getAllBlacklist());
-                String account = AppUtil.getAccount(getActivity(),"");
                 if(!account.equals("")) {
-                    String contactID = mDatabase.push().getKey();
                     for(ContactObj c : listBlack) {
-                        mDatabase.child(account).child(contactID).setValue(c);
+                        String contactID = mDatabase.push().getKey();
+                        mDatabase.child(contactID).setValue(c);
                     }
                 }
-                AppUtil.setEnableSyn(getActivity(), isCheck);
+                AppUtil.setEnableSyn(getActivity(),isCheck);
             }else {
-                AppUtil.setEnableSyn(getActivity(), isCheck);
+                AppUtil.setEnableSyn(getActivity(),isCheck);
             }
 
         }

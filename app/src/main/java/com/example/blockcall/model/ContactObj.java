@@ -1,8 +1,6 @@
 package com.example.blockcall.model;
 
-import com.google.firebase.database.IgnoreExtraProperties;
 
-@IgnoreExtraProperties
 public class ContactObj {
 
     private int id;
@@ -12,6 +10,11 @@ public class ContactObj {
     private String timeBlock;
 
     public ContactObj() {
+    }
+
+    public ContactObj(String userName, String phoneNum) {
+        this.userName = userName;
+        this.phoneNum = phoneNum;
     }
 
     public int getId() {
