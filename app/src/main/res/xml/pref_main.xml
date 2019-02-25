@@ -9,7 +9,7 @@
     <Preference
         android:dialogTitle="Account"
         android:key="account"
-        android:summary="Google"
-        android:title="dunght" />
+        android:summary="dunght196@gmail.com"
+        android:title="Account" />
 
 </PreferenceScreen>

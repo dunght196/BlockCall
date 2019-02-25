@@ -59,7 +59,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if(preference == prefAccount) {
-            AppUtil.setAccount(getActivity(), prefAccount.getTitle().toString());
+//            AppUtil.setAccount(getActivity(), prefAccount.getTitle().toString());
             startActivity(new Intent(getActivity(), SettingSynActivity.class));
         }
         return true;

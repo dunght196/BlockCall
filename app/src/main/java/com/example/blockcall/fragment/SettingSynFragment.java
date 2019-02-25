@@ -22,7 +22,7 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
     private SwitchPreference swSynContact;
     private List<ContactObj> listBlack = new ArrayList<>();
     private DatabaseReference mDatabase;
-    private String account;
+    private String account = "dunght";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
         addPreferencesFromResource(R.xml.pref_account);
         swSynContact = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swSynContact.setOnPreferenceChangeListener(this);
-        account = AppUtil.getAccount(getActivity(),"");
+//        account = AppUtil.getAccount(getActivity(),"");
         mDatabase = FirebaseDatabase.getInstance().getReference(account);
     }
 
@@ -47,6 +47,7 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
                         mDatabase.child(contactID).setValue(c);
                     }
                 }
+                AppUtil.setAccount(getActivity(),account);
                 AppUtil.setEnableSyn(getActivity(),isCheck);
             }else {
                 AppUtil.setEnableSyn(getActivity(),isCheck);
