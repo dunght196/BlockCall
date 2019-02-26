@@ -147,12 +147,9 @@ public class BlacklistTab extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         listBlack.clear();
-//                        BlacklistData.Instance(getContext()).deleteAll();
                         for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                             ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
                             listBlack.add(contactObj);
-                            // save db
-//                            BlacklistData.Instance(getContext()).add(contactObj);
                         }
                         blacklistAdapter.notifyDataSetChanged();
                     }
