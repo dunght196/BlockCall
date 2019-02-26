@@ -182,7 +182,7 @@ public class BlacklistTab extends Fragment {
         }
 
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
                     for(Integer value : blacklistAdapter.getPositionItem()) {
@@ -221,8 +221,8 @@ public class BlacklistTab extends Fragment {
                     tvCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            mode.finish();
                             dialog.cancel();
-                            mActionMode.finish();
                         }
                     });
                     dialog.show();
