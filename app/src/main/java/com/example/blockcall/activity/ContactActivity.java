@@ -33,12 +33,13 @@ public class ContactActivity extends AppCompatActivity {
 
     private RecyclerView rvContact;
     private List<ContactObj> listContact = new ArrayList<>();
-    private List<ContactObj> listSyn = new ArrayList<>();
+    private List<ContactObj> listFirebase = new ArrayList<>();
     private ContactAdapter contactAdapter;
     private Toolbar toolbar;
     private SparseBooleanArray listIndex = new SparseBooleanArray();
     private ImageView ivBack, ivDone;
     private DatabaseReference mDatabase;
+    private int idNote = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +51,8 @@ public class ContactActivity extends AppCompatActivity {
         rvContact = (RecyclerView) findViewById(R.id.rv_contact);
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
-        mDatabase = FirebaseDatabase.getInstance().getReference(AppUtil.getAccount(this,""));
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listSyn.clear();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-                    listSyn.add(contactObj);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
+        mDatabase = FirebaseDatabase.getInstance().getReference("dunght");
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
         contactAdapter = new ContactAdapter(listContact, ContactActivity.this);
@@ -101,8 +88,10 @@ public class ContactActivity extends AppCompatActivity {
                 for(Integer i : listItem) {
                     if(listIndex.get(i)) {
                         if(AppUtil.isEnableSyn(ContactActivity.this)) {
-                            String contactID = mDatabase.push().getKey();
-                            mDatabase.child(contactID).setValue(listContact.get(i));
+                            ContactObj contactObj = listContact.get(i);
+                            idNote++;
+                            contactObj.setId(idNote);
+                            mDatabase.child(String.valueOf(idNote)).setValue(contactObj);
                         }else {
                             BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
                         }
@@ -117,18 +106,34 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         listContact.addAll(getListContacts());
-        // Delete contact selected
+//        // Delete contact selected
         if(AppUtil.isEnableSyn(ContactActivity.this)) {
-            for(ContactObj c1 : listSyn) {
-                for(ContactObj c2 : listContact ) {
-                    if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
-                        listContact.remove(c2);
-                        break;
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    listFirebase.clear();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
+                        listFirebase.add(contactObj);
+                        //get last id in list firebase
+                        idNote = contactObj.getId();
                     }
+                    for(ContactObj c1 : listFirebase) {
+                        for(ContactObj c2 : listContact ) {
+                            if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+                                listContact.remove(c2);
+                                break;
+                            }
+                        }
+                    }
+                    contactAdapter.notifyDataSetChanged();
                 }
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
         }else {
             for(ContactObj c1 : BlacklistData.Instance(this).getAllBlacklist()) {
                 for(ContactObj c2 : listContact ) {
@@ -140,7 +145,6 @@ public class ContactActivity extends AppCompatActivity {
             }
         }
 
-        contactAdapter.notifyDataSetChanged();
     }
 
     private List<ContactObj> getListContacts() {
@@ -176,10 +180,4 @@ public class ContactActivity extends AppCompatActivity {
         return listData;
     }
 
-    public void initPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //Register permission
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 1);
-        }
-    }
 }

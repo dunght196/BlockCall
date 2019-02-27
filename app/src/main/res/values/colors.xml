@@ -8,5 +8,6 @@
     <color name="colorAccent">#2380BD</color>
     <color name="colorLine">#dddddd</color>
     <color name="colorView">#eeeeee</color>
-    <color name="title_color">#ffffff</color>
+    <color name="cwhile">#ffffff</color>
+    <color name="gray">#e3aab1b1</color>
 </resources>

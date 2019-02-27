@@ -59,6 +59,8 @@ public class BlacklistTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
+        String account = AppUtil.getAccount(getContext(),"");
+        mDatabase = FirebaseDatabase.getInstance().getReference(account);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvBlacklist.setLayoutManager(mLayoutManager);
@@ -140,25 +142,21 @@ public class BlacklistTab extends Fragment {
         AppUtil.enableService(getActivity(),enableValue);
         boolean checkSwSyn = AppUtil.isEnableSyn(getContext());
         if (checkSwSyn) {
-            String account = AppUtil.getAccount(getContext(),"");
-            if(!account.equals("")) {
-                mDatabase = FirebaseDatabase.getInstance().getReference(account);
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        listBlack.clear();
-                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                            ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-                            listBlack.add(contactObj);
-                        }
-                        blacklistAdapter.notifyDataSetChanged();
+            mDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    listBlack.clear();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
+                        listBlack.add(contactObj);
                     }
+                    blacklistAdapter.notifyDataSetChanged();
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
         } else {
             listBlack.clear();
             listBlack.addAll(BlacklistData.Instance(getContext()).getAllBlacklist());
@@ -182,15 +180,42 @@ public class BlacklistTab extends Fragment {
         public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    for(Integer value : blacklistAdapter.getPositionItem()) {
-                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
-                        listBlack.remove(value);
-                    }
-                    mode.finish();
-                    blacklistAdapter.clearSelectedItems();
-                    // Refresh fragment
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                    final Dialog dialogDelete = new Dialog(getActivity());
+                    dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialogDelete.setContentView(R.layout.dialog_delete);
+                    TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
+                    TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
+
+                    tvOKDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            for(Integer value : blacklistAdapter.getPositionItem()) {
+                                if(AppUtil.isEnableSyn(getActivity())) {
+                                    String idContact = String.valueOf(listBlack.get(value).getId());
+                                    listBlack.remove(value);
+                                    mDatabase.child(idContact).setValue(null);
+                                }else {
+                                    BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                                    listBlack.remove(value);
+                                }
+                            }
+                            dialogDelete.cancel();
+                            mode.finish();
+                            blacklistAdapter.clearSelectedItems();
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                        }
+                    });
+
+                    tvCancelDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialogDelete.cancel();
+                            mode.finish();
+                        }
+                    });
+
+                    dialogDelete.show();
                     return true;
                 case R.id.action_edit:
                     final Dialog dialog = new Dialog(getActivity());
@@ -206,12 +231,16 @@ public class BlacklistTab extends Fragment {
                     tvOK.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ContactObj contactObj = listBlack.get(positionSeleceted);
-                            contactObj.setUserName(edtName.getText().toString());
-                            contactObj.setPhoneNum(edtPhone.getText().toString());
-                            BlacklistData.Instance(getContext()).update(contactObj);
-                            FragmentTransaction ft = getFragmentManager().beginTransaction();
-                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                            if (AppUtil.isEnableSyn(getActivity())) {
+                                String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
+                                mDatabase.child(idContact).child("phoneNum").setValue(edtPhone.getText().toString());
+                                mDatabase.child(idContact).child("userName").setValue(edtName.getText().toString());
+                            }else {
+                                ContactObj contactObj = listBlack.get(positionSeleceted);
+                                contactObj.setUserName(edtName.getText().toString());
+                                contactObj.setPhoneNum(edtPhone.getText().toString());
+                                BlacklistData.Instance(getContext()).update(contactObj);
+                            }
                             dialog.cancel();
                         }
                     });

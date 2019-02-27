@@ -36,39 +36,11 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
         swSynContact = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swSynContact.setOnPreferenceChangeListener(this);
         mDatabase = FirebaseDatabase.getInstance().getReference(account);
-
-//        mDatabase.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                    ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-//                    Log.e("contact","=" + contactObj.getUserName());
-//                    listSyn.add(contactObj);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-                    listSyn.add(contactObj);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 
     @Override
@@ -78,29 +50,44 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
             listBlack.addAll(BlacklistData.Instance(getActivity()).getAllBlacklist());
             Boolean isCheck = (Boolean) newValue;
             if (isCheck) {
-                Log.e("list","=" + listSyn.size());
-                if (listSyn.isEmpty()) {
-                    for (ContactObj c : listBlack) {
-                        String contactID = mDatabase.push().getKey();
-                        mDatabase.child(contactID).setValue(c);
-                    }
-                } else {
-                    for(ContactObj c1 : listBlack) {
-                        Boolean check = false;
-                        for(ContactObj c2 : listSyn ) {
-                            if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
-                                check = false;
-                                break;
-                            }else {
-                                check = true;
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        listSyn.clear();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
+                            listSyn.add(contactObj);
+                        }
+
+                        if (!listBlack.isEmpty() && listSyn.isEmpty()) {
+                            for (ContactObj c : listBlack) {
+                                String contactID = String.valueOf(c.getId());
+                                mDatabase.child(contactID).setValue(c);
                             }
                         }
-                        if (check) {
-                            String contactID = mDatabase.push().getKey();
-                            mDatabase.child(contactID).setValue(c1);
-                        }
                     }
-                }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+//                } else {
+//                    for(ContactObj c1 : listBlack) {
+//                        Boolean check = false;
+//                        for(ContactObj c2 : listSyn ) {
+//                            if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+//                                check = false;
+//                                break;
+//                            }else {
+//                                check = true;
+//                            }
+//                        }
+//                        if (check) {
+//                            String contactID = mDatabase.push().getKey();
+//                            mDatabase.child(contactID).setValue(c1);
+//                        }
+//                    }
+//                }
                 AppUtil.setAccount(getActivity(), account);
                 AppUtil.setEnableSyn(getActivity(), isCheck);
             }else {

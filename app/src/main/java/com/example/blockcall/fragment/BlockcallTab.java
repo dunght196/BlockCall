@@ -1,5 +1,6 @@
 package com.example.blockcall.fragment;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.TextView;
 
 import com.example.blockcall.R;
 import com.example.blockcall.adapter.BlacklistAdapter;
@@ -23,7 +26,9 @@ import com.example.blockcall.adapter.BlockcallAdapter;
 import com.example.blockcall.db.table.BlacklistData;
 import com.example.blockcall.db.table.BlockcallData;
 import com.example.blockcall.model.ContactObj;
+import com.example.blockcall.utils.AppUtil;
 import com.example.blockcall.utils.Constant;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +72,29 @@ public class BlockcallTab extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BlockcallData.Instance(getContext()).deleteAll();
-                listBlock.clear();
-                blockcallAdapter.notifyDataSetChanged();
+                final Dialog dialogDelete = new Dialog(getActivity());
+                dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogDelete.setContentView(R.layout.dialog_delete);
+                TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
+                TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
+                tvOKDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        BlockcallData.Instance(getContext()).deleteAll();
+                        listBlock.clear();
+                        blockcallAdapter.notifyDataSetChanged();
+                        dialogDelete.cancel();
+                    }
+                });
+
+                tvCancelDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogDelete.cancel();
+                    }
+                });
+
+                dialogDelete.show();
             }
         });
 
