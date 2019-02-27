@@ -150,7 +150,9 @@ public class BlacklistTab extends Fragment {
                         ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
                         listBlack.add(contactObj);
                     }
-                    blacklistAdapter.notifyDataSetChanged();
+                    if(!listBlack.isEmpty()) {
+                        blacklistAdapter.notifyDataSetChanged();
+                    }
                 }
 
                 @Override

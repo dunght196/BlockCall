@@ -39,7 +39,7 @@ public class ContactActivity extends AppCompatActivity {
     private SparseBooleanArray listIndex = new SparseBooleanArray();
     private ImageView ivBack, ivDone;
     private DatabaseReference mDatabase;
-    private int idNote = -1;
+//    private static int idNote = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +51,8 @@ public class ContactActivity extends AppCompatActivity {
         rvContact = (RecyclerView) findViewById(R.id.rv_contact);
         ivBack = (ImageView)findViewById(R.id.iv_back);
         ivDone = (ImageView)findViewById(R.id.iv_done);
-
         mDatabase = FirebaseDatabase.getInstance().getReference("dunght");
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         rvContact.setLayoutManager(mLayoutManager);
         contactAdapter = new ContactAdapter(listContact, ContactActivity.this);
@@ -80,6 +80,10 @@ public class ContactActivity extends AppCompatActivity {
         ivDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int idNote = -1;
+                if(!listFirebase.isEmpty()) {
+                    idNote = listFirebase.get(listFirebase.size()-1).getId();
+                }
                 // get key form listIndex
                 List<Integer> listItem = new ArrayList<>();
                 for(int i=0; i<listIndex.size(); i++) {
@@ -87,9 +91,9 @@ public class ContactActivity extends AppCompatActivity {
                 }
                 for(Integer i : listItem) {
                     if(listIndex.get(i)) {
-                        if(AppUtil.isEnableSyn(ContactActivity.this)) {
-                            ContactObj contactObj = listContact.get(i);
+                        if(AppUtil.isEnableSyn(getApplicationContext())) {
                             idNote++;
+                            ContactObj contactObj = listContact.get(i);
                             contactObj.setId(idNote);
                             mDatabase.child(String.valueOf(idNote)).setValue(contactObj);
                         }else {
@@ -116,17 +120,19 @@ public class ContactActivity extends AppCompatActivity {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
                         listFirebase.add(contactObj);
-                        //get last id in list firebase
-                        idNote = contactObj.getId();
                     }
-                    for(ContactObj c1 : listFirebase) {
-                        for(ContactObj c2 : listContact ) {
-                            if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
-                                listContact.remove(c2);
-                                break;
+                    if(!listFirebase.isEmpty()) {
+                        // get last id in list firebase
+                        for(ContactObj c1 : listFirebase) {
+                            for(ContactObj c2 : listContact ) {
+                                if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {
+                                    listContact.remove(c2);
+                                    break;
+                                }
                             }
                         }
                     }
+
                     contactAdapter.notifyDataSetChanged();
                 }
                 @Override
