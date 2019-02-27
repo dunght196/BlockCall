@@ -59,8 +59,6 @@ public class BlacklistTab extends Fragment {
 
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
-        String account = AppUtil.getAccount(getContext(),"");
-        mDatabase = FirebaseDatabase.getInstance().getReference(account);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvBlacklist.setLayoutManager(mLayoutManager);
@@ -142,6 +140,7 @@ public class BlacklistTab extends Fragment {
         AppUtil.enableService(getActivity(),enableValue);
         boolean checkSwSyn = AppUtil.isEnableSyn(getContext());
         if (checkSwSyn) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
             mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -191,6 +190,7 @@ public class BlacklistTab extends Fragment {
                     tvOKDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
                             for(Integer value : blacklistAdapter.getPositionItem()) {
                                 if(AppUtil.isEnableSyn(getActivity())) {
                                     String idContact = String.valueOf(listBlack.get(value).getId());
@@ -233,6 +233,7 @@ public class BlacklistTab extends Fragment {
                     tvOK.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
                             if (AppUtil.isEnableSyn(getActivity())) {
                                 String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
                                 mDatabase.child(idContact).child("phoneNum").setValue(edtPhone.getText().toString());
