@@ -61,7 +61,6 @@ public class BlacklistTab extends Fragment {
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
 
-//        mDatabase = FirebaseDatabase.getInstance().getReference("dunght");
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvBlacklist.setLayoutManager(mLayoutManager);
         modeCallback = new ActionModeCallback();
@@ -111,11 +110,24 @@ public class BlacklistTab extends Fragment {
                         tvOK.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                int idNote = 0;
+                                if(!listBlack.isEmpty()) {
+                                    idNote = listBlack.get(listBlack.size()-1).getId() + 1;
+                                }
                                 ContactObj contactObj = new ContactObj();
+                                contactObj.setId(idNote);
                                 contactObj.setUserName(edtName.getText().toString());
                                 contactObj.setPhoneNum(edtPhone.getText().toString());
-                                BlacklistData.Instance(getContext()).add(contactObj);
-                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                if(AppUtil.isEnableSyn(getActivity())) {
+                                    mDatabase.child(String.valueOf(idNote)).setValue(contactObj);
+                                    BlacklistData.Instance(getActivity()).add(contactObj);
+                                }else {
+                                    BlacklistData.Instance(getActivity()).add(contactObj);
+                                }
+//                                startActivity(new Intent(getActivity(), MainActivity.class));
+                                dialogNumber.cancel();
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
                             }
                         });
 
@@ -168,20 +180,6 @@ public class BlacklistTab extends Fragment {
             blacklistAdapter.notifyDataSetChanged();
         }
     }
-
-    private Boolean isContain(ContactObj contactObj, List<ContactObj> listBlack) {
-        Boolean check = false;
-        for(ContactObj c2 : listBlack ) {
-            if(c2.getUserName().equals(contactObj.getUserName()) && c2.getPhoneNum().equals(contactObj.getPhoneNum())) {
-                check = true;
-                break;
-            }else {
-                check = false;
-            }
-        }
-        return check;
-    }
-
 
     private class ActionModeCallback implements ActionMode.Callback {
         @Override
@@ -298,7 +296,6 @@ public class BlacklistTab extends Fragment {
             itemView.setSelected(true);
         }
         toggleSelection(itemView,position);
-
     }
 
     public void toggleSelection(View itemView, int position) {
@@ -317,6 +314,4 @@ public class BlacklistTab extends Fragment {
             mActionMode.invalidate();
         }
     }
-
-
 }

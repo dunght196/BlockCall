@@ -27,7 +27,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     private SwitchPreference swBlockcall, swSynchornize;
     private Preference prefAccount;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

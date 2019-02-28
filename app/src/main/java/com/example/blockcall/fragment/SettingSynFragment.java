@@ -37,12 +37,6 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
         addPreferencesFromResource(R.xml.pref_account);
         swSynContact = (SwitchPreference) getPreferenceScreen().findPreference("key_syn");
         swSynContact.setOnPreferenceChangeListener(this);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -58,7 +52,6 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
                     listSyn.add(contactObj);
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -72,39 +65,19 @@ public class SettingSynFragment extends PreferenceFragment implements Preference
             if (isCheck) {
                 listBlack.clear();
                 listBlack.addAll(BlacklistData.Instance(getActivity()).getAllBlacklist());
-                Log.e("list","="+listSyn.size());
-//                mDatabase = FirebaseDatabase.getInstance().getReference(account);
-//                mDatabase.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        listSyn.clear();
-//                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-//                            ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
-//                            listSyn.add(contactObj);
-//                        }
-//
-                        if (listSyn.isEmpty()) {
-                            for (ContactObj c : listBlack) {
-                                String contactID = String.valueOf(c.getId());
-                                mDatabase.child(contactID).setValue(c);
-                            }
-                        }else {
-                            for(ContactObj c : listBlack) {
-                                if(!isContain(c,listSyn)) {
-                                    String idContact = String.valueOf(c.getId());
-                                    mDatabase.child(idContact).setValue(c);
-                                }
-                            }
+                if (listSyn.isEmpty()) {
+                    for (ContactObj c : listBlack) {
+                        String contactID = String.valueOf(c.getId());
+                        mDatabase.child(contactID).setValue(c);
+                    }
+                }else {
+                    for(ContactObj c : listBlack) {
+                        if(!isContain(c,listSyn)) {
+                            String idContact = String.valueOf(c.getId());
+                            mDatabase.child(idContact).setValue(c);
                         }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                });
-
-
-
+                    }
+                }
                 AppUtil.setAccount(getActivity(), account);
                 AppUtil.setEnableSyn(getActivity(), isCheck);
             }else {
