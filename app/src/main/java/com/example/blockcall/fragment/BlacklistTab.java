@@ -252,8 +252,12 @@ public class BlacklistTab extends Fragment {
                         public void onClick(View view) {
                             if (AppUtil.isEnableSyn(getActivity())) {
                                 String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
-                                mDatabase.child(idContact).child("phoneNum").setValue(edtPhone.getText().toString());
-                                mDatabase.child(idContact).child("userName").setValue(edtName.getText().toString());
+                                ContactObj contactObj = listBlack.get(positionSeleceted);
+                                contactObj.setUserName(edtName.getText().toString());
+                                contactObj.setPhoneNum(edtPhone.getText().toString());
+                                mDatabase.child(idContact).child("phoneNum").setValue(contactObj.getPhoneNum());
+                                mDatabase.child(idContact).child("userName").setValue(contactObj.getUserName());
+                                BlacklistData.Instance(getContext()).update(contactObj);
                             }else {
                                 ContactObj contactObj = listBlack.get(positionSeleceted);
                                 contactObj.setUserName(edtName.getText().toString());
