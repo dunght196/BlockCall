@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,6 +61,7 @@ public class BlacklistTab extends Fragment {
         fab = rootView.findViewById(R.id.fab_blacklist);
         rvBlacklist = rootView.findViewById(R.id.rv_blacklist);
 
+//        mDatabase = FirebaseDatabase.getInstance().getReference("dunght");
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvBlacklist.setLayoutManager(mLayoutManager);
         modeCallback = new ActionModeCallback();
@@ -140,15 +142,17 @@ public class BlacklistTab extends Fragment {
         AppUtil.enableService(getActivity(),enableValue);
         boolean checkSwSyn = AppUtil.isEnableSyn(getContext());
         if (checkSwSyn) {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
+            mDatabase = FirebaseDatabase.getInstance().getReference("dunght");
             mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     listBlack.clear();
+                    BlacklistData.Instance(getActivity()).deleteAll();
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         ContactObj contactObj = postSnapshot.getValue(ContactObj.class);
                         listBlack.add(contactObj);
-                    }
+                        BlacklistData.Instance(getActivity()).add(contactObj);
+                     }
                     if(!listBlack.isEmpty()) {
                         blacklistAdapter.notifyDataSetChanged();
                     }
@@ -164,6 +168,20 @@ public class BlacklistTab extends Fragment {
             blacklistAdapter.notifyDataSetChanged();
         }
     }
+
+    private Boolean isContain(ContactObj contactObj, List<ContactObj> listBlack) {
+        Boolean check = false;
+        for(ContactObj c2 : listBlack ) {
+            if(c2.getUserName().equals(contactObj.getUserName()) && c2.getPhoneNum().equals(contactObj.getPhoneNum())) {
+                check = true;
+                break;
+            }else {
+                check = false;
+            }
+        }
+        return check;
+    }
+
 
     private class ActionModeCallback implements ActionMode.Callback {
         @Override
@@ -190,12 +208,12 @@ public class BlacklistTab extends Fragment {
                     tvOKDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
                             for(Integer value : blacklistAdapter.getPositionItem()) {
                                 if(AppUtil.isEnableSyn(getActivity())) {
                                     String idContact = String.valueOf(listBlack.get(value).getId());
+                                    BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                                    mDatabase.child(idContact).removeValue();
                                     listBlack.remove(value);
-                                    mDatabase.child(idContact).setValue(null);
                                 }else {
                                     BlacklistData.Instance(getContext()).delete(listBlack.get(value));
                                     listBlack.remove(value);
@@ -204,8 +222,7 @@ public class BlacklistTab extends Fragment {
                             dialogDelete.cancel();
                             mode.finish();
                             blacklistAdapter.clearSelectedItems();
-                            FragmentTransaction ft = getFragmentManager().beginTransaction();
-                            ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+                            blacklistAdapter.notifyDataSetChanged();
                         }
                     });
 
@@ -233,7 +250,6 @@ public class BlacklistTab extends Fragment {
                     tvOK.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("dunght");
                             if (AppUtil.isEnableSyn(getActivity())) {
                                 String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
                                 mDatabase.child(idContact).child("phoneNum").setValue(edtPhone.getText().toString());

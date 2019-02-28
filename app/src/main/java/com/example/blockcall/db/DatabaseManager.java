@@ -25,7 +25,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String tbBlacklist = "CREATE TABLE " + TABLE_BlACKLIST_NAME + "( "
-                                        + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                        + COLUMN_ID + " INTEGER, "
                                         + COLUMN_NAME_CONTACT + " TEXT, "
                                         + COLUMN_PHONE_CONTACT + " TEXT )";
 

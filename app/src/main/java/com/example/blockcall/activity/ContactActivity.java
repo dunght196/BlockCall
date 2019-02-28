@@ -34,6 +34,7 @@ public class ContactActivity extends AppCompatActivity {
     private RecyclerView rvContact;
     private List<ContactObj> listContact = new ArrayList<>();
     private List<ContactObj> listFirebase = new ArrayList<>();
+    private List<ContactObj> listBlack = new ArrayList<>();
     private ContactAdapter contactAdapter;
     private Toolbar toolbar;
     private SparseBooleanArray listIndex = new SparseBooleanArray();
@@ -80,10 +81,7 @@ public class ContactActivity extends AppCompatActivity {
         ivDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int idNote = -1;
-                if(!listFirebase.isEmpty()) {
-                    idNote = listFirebase.get(listFirebase.size()-1).getId();
-                }
+                int idNote = 0;
                 // get key form listIndex
                 List<Integer> listItem = new ArrayList<>();
                 for(int i=0; i<listIndex.size(); i++) {
@@ -92,17 +90,28 @@ public class ContactActivity extends AppCompatActivity {
                 for(Integer i : listItem) {
                     if(listIndex.get(i)) {
                         if(AppUtil.isEnableSyn(getApplicationContext())) {
+                            if(!listFirebase.isEmpty()) {
+                                idNote = listFirebase.get(listFirebase.size()-1).getId();
+                            }
                             idNote++;
                             ContactObj contactObj = listContact.get(i);
                             contactObj.setId(idNote);
                             mDatabase.child(String.valueOf(idNote)).setValue(contactObj);
-                        }else {
                             BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
+                        }else {
+                            listBlack.addAll(BlacklistData.Instance(ContactActivity.this).getAllBlacklist());
+                            if(!listBlack.isEmpty()) {
+                                idNote = listBlack.get(listBlack.size()-1).getId();
+                            }
+                            idNote++;
+                            ContactObj contactObj = listContact.get(i);
+                            contactObj.setId(idNote);
+                            BlacklistData.Instance(ContactActivity.this).add(contactObj);
                         }
                     }
                 }
                 startActivity(new Intent(ContactActivity.this, MainActivity.class));
-                finishAffinity();
+                finish();
             }
         });
     }

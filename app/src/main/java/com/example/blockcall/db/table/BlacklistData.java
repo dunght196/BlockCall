@@ -34,6 +34,7 @@ public class BlacklistData {
     public void add(ContactObj contactObj) {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseManager.COLUMN_ID, contactObj.getId());
         contentValues.put(DatabaseManager.COLUMN_NAME_CONTACT, contactObj.getUserName());
         contentValues.put(DatabaseManager.COLUMN_PHONE_CONTACT, contactObj.getPhoneNum());
 
