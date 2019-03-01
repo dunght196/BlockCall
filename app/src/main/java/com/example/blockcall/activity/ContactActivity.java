@@ -40,7 +40,6 @@ public class ContactActivity extends AppCompatActivity {
     private SparseBooleanArray listIndex = new SparseBooleanArray();
     private ImageView ivBack, ivDone;
     private DatabaseReference mDatabase;
-//    private static int idNote = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +130,6 @@ public class ContactActivity extends AppCompatActivity {
                         listFirebase.add(contactObj);
                     }
                     if(!listFirebase.isEmpty()) {
-                        // get last id in list firebase
                         for(ContactObj c1 : listFirebase) {
                             for(ContactObj c2 : listContact ) {
                                 if(c2.getUserName().equals(c1.getUserName()) && c2.getPhoneNum().equals(c1.getPhoneNum())) {

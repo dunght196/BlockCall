@@ -22,10 +22,10 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_name_block_call"
             android:layout_marginTop="12dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_name_block_call"
             android:text="User name"
             android:textStyle="bold"/>
 
