@@ -86,29 +86,6 @@ public class ContactActivity extends AppCompatActivity {
                 for(int i=0; i<listIndex.size(); i++) {
                     listItem.add(listIndex.keyAt(i));
                 }
-//                for(Integer i : listItem) {
-//                    if(listIndex.get(i)) {
-//                        if(AppUtil.isEnableSyn(getApplicationContext())) {
-//                            if(!listFirebase.isEmpty()) {
-//                                idNote = listFirebase.get(listFirebase.size()-1).getId();
-//                            }
-//                            idNote++;
-//                            ContactObj contactObj = listContact.get(i);
-//                            contactObj.setId(idNote);
-//                            mDatabase.child(String.valueOf(idNote)).setValue(contactObj);
-//                            BlacklistData.Instance(ContactActivity.this).add(listContact.get(i));
-//                        }else {
-//                            listBlack.addAll(BlacklistData.Instance(ContactActivity.this).getAllBlacklist());
-//                            if(!listBlack.isEmpty()) {
-//                                idNote = listBlack.get(listBlack.size()-1).getId();
-//                            }
-//                            idNote++;
-//                            ContactObj contactObj = listContact.get(i);
-//                            contactObj.setId(idNote);
-//                            BlacklistData.Instance(ContactActivity.this).add(contactObj);
-//                        }
-//                    }
-//                }
 
                 if(AppUtil.isEnableSyn(getApplicationContext())) {
                     if(!listFirebase.isEmpty()) {
