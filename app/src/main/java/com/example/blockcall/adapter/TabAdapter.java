@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.blockcall.fragment.BaseFragment;
 import com.example.blockcall.fragment.BlacklistTab;
 import com.example.blockcall.fragment.BlockcallTab;
 
@@ -22,11 +21,9 @@ public class TabAdapter extends FragmentStatePagerAdapter {
         switch (i) {
             case 0 : {
                 return new BlacklistTab();
-//                return BaseFragment.newInstance(i);
             }
             case 1 : {
                 return new BlockcallTab();
-//                return BaseFragment.newInstance(i);
             }
             default : {
                 return null;

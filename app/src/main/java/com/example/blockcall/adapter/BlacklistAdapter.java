@@ -92,9 +92,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
             itemView.setBackgroundColor(Color.parseColor("#EEEEEE"));
         }else {
             selectedItems.put(pos,true);
-
             itemView.setBackgroundColor(Color.parseColor("#DDDDDD"));
-
         }
     }
 
@@ -108,10 +106,5 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.MyVi
             listItem.add(selectedItems.keyAt(i));
         }
         return listItem;
-    }
-
-    public void clearSelectedItems() {
-        selectedItems.clear();
-        notifyDataSetChanged();
     }
 }

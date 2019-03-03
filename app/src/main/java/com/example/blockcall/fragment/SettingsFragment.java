@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
-    private SwitchPreference swBlockcall, swSynchornize;
+    private SwitchPreference swBlockcall;
     private Preference prefAccount;
 
     @Override
@@ -48,19 +48,18 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         return true;
     }
 
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if(preference == prefAccount) {
+            startActivity(new Intent(getActivity(), SettingSynActivity.class));
+        }
+        return true;
+    }
+
     public void initPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //Register permission
             requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE}, 1);
         }
-    }
-
-    @Override
-    public boolean onPreferenceClick(Preference preference) {
-        if(preference == prefAccount) {
-//            AppUtil.setAccount(getActivity(), prefAccount.getTitle().toString());
-            startActivity(new Intent(getActivity(), SettingSynActivity.class));
-        }
-        return true;
     }
 }
