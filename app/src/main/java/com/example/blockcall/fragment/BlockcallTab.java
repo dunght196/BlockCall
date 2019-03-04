@@ -78,9 +78,21 @@ public class BlockcallTab extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BlockcallData.Instance(getContext()).deleteAll();
-                listBlock.clear();
-                blockcallAdapter.notifyDataSetChanged();
+                final DialogUtil dialogUtil = new DialogUtil(getContext(), R.layout.dialog_delete, null);
+                dialogUtil.action(new DialogUtil.DialogListener() {
+                    @Override
+                    public void onClickDone() {
+                        BlockcallData.Instance(getContext()).deleteAll();
+                        listBlock.clear();
+                        blockcallAdapter.notifyDataSetChanged();
+                        dialogUtil.cancel();
+                    }
+                    @Override
+                    public void onClickCancel() {
+                        dialogUtil.cancel();
+                    }
+                });
+                dialogUtil.show();
             }
         });
 
