@@ -78,29 +78,9 @@ public class BlockcallTab extends ListFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Dialog dialogDelete = new Dialog(getActivity());
-                dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialogDelete.setContentView(R.layout.dialog_delete);
-                TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok);
-                TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel);
-                tvOKDelete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        BlockcallData.Instance(getContext()).deleteAll();
-                        listBlock.clear();
-                        blockcallAdapter.notifyDataSetChanged();
-                        dialogDelete.cancel();
-                    }
-                });
-
-                tvCancelDelete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialogDelete.cancel();
-                    }
-                });
-
-                dialogDelete.show();
+                BlockcallData.Instance(getContext()).deleteAll();
+                listBlock.clear();
+                blockcallAdapter.notifyDataSetChanged();
             }
         });
 
