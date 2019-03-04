@@ -28,6 +28,7 @@ import com.example.blockcall.dialog.DialogDelete;
 import com.example.blockcall.dialog.DialogEdit;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
+import com.example.blockcall.utils.DialogUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -168,8 +169,8 @@ public class BlacklistTab extends ListFragment {
 
     @Override
     public void handleActionDelete(final ActionMode mode) {
-        final DialogDelete dialogDelete = new DialogDelete(getContext());
-        dialogDelete.action(new DialogDelete.DialogListener() {
+        final DialogUtil dialogUtil = new DialogUtil(getContext(), R.layout.dialog_delete, listBlack.get(positionSeleceted));
+        dialogUtil.action(new DialogUtil.DialogListener() {
             @Override
             public void onClickDone() {
                 for(Integer value : blacklistAdapter.getPositionItem()) {
@@ -183,50 +184,51 @@ public class BlacklistTab extends ListFragment {
                         listBlack.remove(value);
                     }
                 }
-                dialogDelete.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
 
             @Override
             public void onClickCancel() {
-                dialogDelete.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
         });
-        dialogDelete.show();
+
+        dialogUtil.show();
     }
 
     @Override
     public void handleActionEdit(final ActionMode mode) {
-        final DialogEdit dialogEdit = new DialogEdit(getContext(), listBlack.get(positionSeleceted));
-        dialogEdit.action(new DialogEdit.DialogListener() {
+        final DialogUtil dialogUtil = new DialogUtil(getContext(), R.layout.dialog_edit, listBlack.get(positionSeleceted));
+        dialogUtil.action(new DialogUtil.DialogListener() {
             @Override
             public void onClickDone() {
                 if (AppUtil.isEnableSyn(getActivity())) {
                     String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
                     ContactObj contactObj = listBlack.get(positionSeleceted);
-                    contactObj.setUserName(dialogEdit.edtName.getText().toString());
-                    contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
+                    contactObj.setUserName(dialogUtil.edtName.getText().toString());
+                    contactObj.setPhoneNum(dialogUtil.edtPhone.getText().toString());
                     mDatabase.child(idContact).child("phoneNum").setValue(contactObj.getPhoneNum());
                     mDatabase.child(idContact).child("userName").setValue(contactObj.getUserName());
                     BlacklistData.Instance(getContext()).update(contactObj);
                 }else {
                     ContactObj contactObj = listBlack.get(positionSeleceted);
-                    contactObj.setUserName(dialogEdit.edtName.getText().toString());
-                    contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
+                    contactObj.setUserName(dialogUtil.edtName.getText().toString());
+                    contactObj.setPhoneNum(dialogUtil.edtPhone.getText().toString());
                     BlacklistData.Instance(getContext()).update(contactObj);
                 }
-                dialogEdit.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
 
             @Override
             public void onClickCancel() {
-                dialogEdit.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
         });
-        dialogEdit.show();
+        dialogUtil.show();
     }
 
     @Override
