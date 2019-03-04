@@ -33,7 +33,7 @@
         android:weightSum="2">
 
         <TextView
-            android:id="@+id/tv_cancel_delete"
+            android:id="@+id/tv_cancel"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
@@ -42,7 +42,7 @@
             android:text="@string/cancel"/>
 
         <TextView
-            android:id="@+id/tv_ok_delete"
+            android:id="@+id/tv_ok"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"

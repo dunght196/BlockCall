@@ -26,15 +26,15 @@
 
         <TextView
             android:layout_marginLeft="125dp"
-            android:id="@+id/tv_edit_cancel"
+            android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"/>
 
         <TextView
-            android:id="@+id/tv_edit_ok"
+            android:id="@+id/tv_ok"
             android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/tv_edit_cancel"
+            android:layout_toRightOf="@+id/tv_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"/>

@@ -27,6 +27,8 @@ import com.example.blockcall.R;
 import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.adapter.BlockcallAdapter;
 import com.example.blockcall.db.table.BlockcallData;
+import com.example.blockcall.dialog.DialogDelete;
+import com.example.blockcall.dialog.DialogEdit;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.Constant;
 import java.util.ArrayList;
@@ -79,8 +81,8 @@ public class BlockcallTab extends ListFragment {
                 final Dialog dialogDelete = new Dialog(getActivity());
                 dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialogDelete.setContentView(R.layout.dialog_delete);
-                TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
-                TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
+                TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok);
+                TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel);
                 tvOKDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -126,15 +128,10 @@ public class BlockcallTab extends ListFragment {
 
     @Override
     public void handleActionDelete(final ActionMode mode) {
-        final Dialog dialogDelete = new Dialog(getActivity());
-        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogDelete.setContentView(R.layout.dialog_delete);
-        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
-        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
-
-        tvOKDelete.setOnClickListener(new View.OnClickListener() {
+        final DialogDelete dialogDelete = new DialogDelete(getContext());
+        dialogDelete.action(new DialogDelete.DialogListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickDone() {
                 for(Integer value : blockcallAdapter.getPositionItem()) {
                     BlockcallData.Instance(getActivity()).delete(listBlock.get(value));
                     listBlock.remove(value);
@@ -142,11 +139,9 @@ public class BlockcallTab extends ListFragment {
                 dialogDelete.cancel();
                 mode.finish();
             }
-        });
 
-        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickCancel() {
                 dialogDelete.cancel();
                 mode.finish();
             }
@@ -157,34 +152,25 @@ public class BlockcallTab extends ListFragment {
 
     @Override
     public void handleActionEdit(final ActionMode mode) {
-        final Dialog dialogEdit = new Dialog(getActivity());
-        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogEdit.setContentView(R.layout.dialog_edit);
-
-        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
-        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
-        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
-        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
-        edtName.setText(listBlock.get(positionSeleceted).getUserName());
-        edtPhone.setText(listBlock.get(positionSeleceted).getPhoneNum());
-        tvOK.setOnClickListener(new View.OnClickListener() {
+        final DialogEdit dialogEdit = new DialogEdit(getContext(), listBlock.get(positionSeleceted));
+        dialogEdit.action(new DialogEdit.DialogListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickDone() {
                 ContactObj contactObj = listBlock.get(positionSeleceted);
-                contactObj.setUserName(edtName.getText().toString());
-                contactObj.setPhoneNum(edtPhone.getText().toString());
+                contactObj.setUserName(dialogEdit.edtName.getText().toString());
+                contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
                 BlockcallData.Instance(getContext()).update(contactObj);
                 dialogEdit.cancel();
                 mode.finish();
             }
-        });
-        tvCancel.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
+            public void onClickCancel() {
                 dialogEdit.cancel();
                 mode.finish();
             }
         });
+
         dialogEdit.show();
     }
 

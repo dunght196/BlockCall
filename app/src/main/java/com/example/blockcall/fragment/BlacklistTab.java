@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,12 +19,13 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.blockcall.R;
 import com.example.blockcall.activity.ContactActivity;
 import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.db.table.BlacklistData;
+import com.example.blockcall.dialog.DialogDelete;
+import com.example.blockcall.dialog.DialogEdit;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
 import com.google.firebase.database.DataSnapshot;
@@ -166,15 +168,10 @@ public class BlacklistTab extends ListFragment {
 
     @Override
     public void handleActionDelete(final ActionMode mode) {
-        final Dialog dialogDelete = new Dialog(getActivity());
-        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogDelete.setContentView(R.layout.dialog_delete);
-        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
-        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
-
-        tvOKDelete.setOnClickListener(new View.OnClickListener() {
+        final DialogDelete dialogDelete = new DialogDelete(getContext());
+        dialogDelete.action(new DialogDelete.DialogListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickDone() {
                 for(Integer value : blacklistAdapter.getPositionItem()) {
                     if(AppUtil.isEnableSyn(getActivity())) {
                         String idContact = String.valueOf(listBlack.get(value).getId());
@@ -189,11 +186,9 @@ public class BlacklistTab extends ListFragment {
                 dialogDelete.cancel();
                 mode.finish();
             }
-        });
 
-        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickCancel() {
                 dialogDelete.cancel();
                 mode.finish();
             }
@@ -203,40 +198,30 @@ public class BlacklistTab extends ListFragment {
 
     @Override
     public void handleActionEdit(final ActionMode mode) {
-        final Dialog dialogEdit = new Dialog(getActivity());
-        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialogEdit.setContentView(R.layout.dialog_edit);
-
-        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
-        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
-        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
-        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
-        edtName.setText(listBlack.get(positionSeleceted).getUserName());
-        edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
-        tvOK.setOnClickListener(new View.OnClickListener() {
+        final DialogEdit dialogEdit = new DialogEdit(getContext(), listBlack.get(positionSeleceted));
+        dialogEdit.action(new DialogEdit.DialogListener() {
             @Override
-            public void onClick(View view) {
+            public void onClickDone() {
                 if (AppUtil.isEnableSyn(getActivity())) {
                     String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
                     ContactObj contactObj = listBlack.get(positionSeleceted);
-                    contactObj.setUserName(edtName.getText().toString());
-                    contactObj.setPhoneNum(edtPhone.getText().toString());
+                    contactObj.setUserName(dialogEdit.edtName.getText().toString());
+                    contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
                     mDatabase.child(idContact).child("phoneNum").setValue(contactObj.getPhoneNum());
                     mDatabase.child(idContact).child("userName").setValue(contactObj.getUserName());
                     BlacklistData.Instance(getContext()).update(contactObj);
                 }else {
                     ContactObj contactObj = listBlack.get(positionSeleceted);
-                    contactObj.setUserName(edtName.getText().toString());
-                    contactObj.setPhoneNum(edtPhone.getText().toString());
+                    contactObj.setUserName(dialogEdit.edtName.getText().toString());
+                    contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
                     BlacklistData.Instance(getContext()).update(contactObj);
                 }
                 dialogEdit.cancel();
                 mode.finish();
             }
-        });
-        tvCancel.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
+            public void onClickCancel() {
                 dialogEdit.cancel();
                 mode.finish();
             }
