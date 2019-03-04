@@ -4,39 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_block_call"
-        android:src="@drawable/ic_contact"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="fitXY"
-        android:layout_marginLeft="5dp"/>
-
-    <LinearLayout
+    <include
+        layout="@layout/item_blacklist"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/iv_block_call"
-        android:layout_marginLeft="10dp"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/tv_name_block_call"
-            android:layout_marginTop="12dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User name"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/tv_phone_block_call"
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0982503083"
-            android:textStyle="bold"/>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
+        android:id="@+id/ll_blockcall"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="12dp"
         android:layout_width="wrap_content"
@@ -61,6 +35,6 @@
         android:background="@color/colorLine"
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
-        android:layout_below="@+id/iv_block_call" />
+        android:layout_below="@+id/iv_blacklist" />
 
 </RelativeLayout>

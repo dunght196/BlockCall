@@ -63,9 +63,9 @@ public class BlockcallAdapter extends RecyclerView.Adapter<BlockcallAdapter.MyVi
 
         public MyViewHolder(final View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.iv_block_call);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name_block_call);
-            tvPhone = (TextView) itemView.findViewById(R.id.tv_phone_block_call);
+            imageView = (ImageView) itemView.findViewById(R.id.iv_blacklist);
+            tvName = (TextView) itemView.findViewById(R.id.tv_name_blacklist);
+            tvPhone = (TextView) itemView.findViewById(R.id.tv_phone_blacklist);
             tvDate = (TextView) itemView.findViewById(R.id.tv_date_block);
             tvTime = (TextView) itemView.findViewById(R.id.tv_time_block);
             view = (View)itemView.findViewById(R.id.view_line_block);
