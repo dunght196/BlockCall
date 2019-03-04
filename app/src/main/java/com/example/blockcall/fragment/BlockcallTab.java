@@ -27,10 +27,10 @@ import com.example.blockcall.R;
 import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.adapter.BlockcallAdapter;
 import com.example.blockcall.db.table.BlockcallData;
-import com.example.blockcall.dialog.DialogDelete;
-import com.example.blockcall.dialog.DialogEdit;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.Constant;
+import com.example.blockcall.utils.DialogUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,50 +108,48 @@ public class BlockcallTab extends ListFragment {
 
     @Override
     public void handleActionDelete(final ActionMode mode) {
-        final DialogDelete dialogDelete = new DialogDelete(getContext());
-        dialogDelete.action(new DialogDelete.DialogListener() {
+        final DialogUtil dialogUtil = new DialogUtil(getContext(), R.layout.dialog_delete, listBlock.get(positionSeleceted));
+        dialogUtil.action(new DialogUtil.DialogListener() {
             @Override
             public void onClickDone() {
                 for(Integer value : blockcallAdapter.getPositionItem()) {
                     BlockcallData.Instance(getActivity()).delete(listBlock.get(value));
                     listBlock.remove(value);
                 }
-                dialogDelete.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
 
             @Override
             public void onClickCancel() {
-                dialogDelete.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
         });
-
-        dialogDelete.show();
+        dialogUtil.show();
     }
 
     @Override
     public void handleActionEdit(final ActionMode mode) {
-        final DialogEdit dialogEdit = new DialogEdit(getContext(), listBlock.get(positionSeleceted));
-        dialogEdit.action(new DialogEdit.DialogListener() {
+        final DialogUtil dialogUtil = new DialogUtil(getContext(), R.layout.dialog_edit, listBlock.get(positionSeleceted));
+        dialogUtil.action(new DialogUtil.DialogListener() {
             @Override
             public void onClickDone() {
                 ContactObj contactObj = listBlock.get(positionSeleceted);
-                contactObj.setUserName(dialogEdit.edtName.getText().toString());
-                contactObj.setPhoneNum(dialogEdit.edtPhone.getText().toString());
+                contactObj.setUserName(dialogUtil.edtName.getText().toString());
+                contactObj.setPhoneNum(dialogUtil.edtPhone.getText().toString());
                 BlockcallData.Instance(getContext()).update(contactObj);
-                dialogEdit.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
 
             @Override
             public void onClickCancel() {
-                dialogEdit.cancel();
+                dialogUtil.cancel();
                 mode.finish();
             }
         });
-
-        dialogEdit.show();
+        dialogUtil.show();
     }
 
     @Override

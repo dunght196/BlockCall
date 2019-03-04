@@ -24,8 +24,6 @@ import com.example.blockcall.R;
 import com.example.blockcall.activity.ContactActivity;
 import com.example.blockcall.adapter.BlacklistAdapter;
 import com.example.blockcall.db.table.BlacklistData;
-import com.example.blockcall.dialog.DialogDelete;
-import com.example.blockcall.dialog.DialogEdit;
 import com.example.blockcall.model.ContactObj;
 import com.example.blockcall.utils.AppUtil;
 import com.example.blockcall.utils.DialogUtil;
