@@ -59,6 +59,7 @@ public class BlockcallTab extends ListFragment {
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Constant.mBroadcastAction);
 
+        modeCallback = new ActionModeCallback();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvList.setLayoutManager(mLayoutManager);
         blockcallAdapter = new BlockcallAdapter(listBlock, getContext());
@@ -101,83 +102,6 @@ public class BlockcallTab extends ListFragment {
             }
         });
 
-        modeCallback = new ActionModeCallback() {
-            @Override
-            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        final Dialog dialogDelete = new Dialog(getActivity());
-                        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogDelete.setContentView(R.layout.dialog_delete);
-                        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
-                        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
-
-                        tvOKDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                for(Integer value : blockcallAdapter.getPositionItem()) {
-                                    BlockcallData.Instance(getActivity()).delete(listBlock.get(value));
-                                    listBlock.remove(value);
-                                }
-                                dialogDelete.cancel();
-                                mode.finish();
-                            }
-                        });
-
-                        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dialogDelete.cancel();
-                                mode.finish();
-                            }
-                        });
-
-                        dialogDelete.show();
-                        return true;
-                    case R.id.action_edit:
-                        final Dialog dialogEdit = new Dialog(getActivity());
-                        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogEdit.setContentView(R.layout.dialog_edit);
-
-                        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
-                        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
-                        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
-                        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
-                        edtName.setText(listBlock.get(positionSeleceted).getUserName());
-                        edtPhone.setText(listBlock.get(positionSeleceted).getPhoneNum());
-                        tvOK.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                ContactObj contactObj = listBlock.get(positionSeleceted);
-                                contactObj.setUserName(edtName.getText().toString());
-                                contactObj.setPhoneNum(edtPhone.getText().toString());
-                                BlockcallData.Instance(getContext()).update(contactObj);
-                                dialogEdit.cancel();
-                                mode.finish();
-                            }
-                        });
-                        tvCancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialogEdit.cancel();
-                                mode.finish();
-                            }
-                        });
-                        dialogEdit.show();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(BlockcallTab.this).attach(BlockcallTab.this).commit();
-                super.onDestroyActionMode(mode);
-            }
-        };
-
         return rootView;
     }
 
@@ -200,8 +124,80 @@ public class BlockcallTab extends ListFragment {
         super.bindView(view);
     }
 
+    @Override
+    public void handleActionDelete(final ActionMode mode) {
+        final Dialog dialogDelete = new Dialog(getActivity());
+        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogDelete.setContentView(R.layout.dialog_delete);
+        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
+        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
+
+        tvOKDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(Integer value : blockcallAdapter.getPositionItem()) {
+                    BlockcallData.Instance(getActivity()).delete(listBlock.get(value));
+                    listBlock.remove(value);
+                }
+                dialogDelete.cancel();
+                mode.finish();
+            }
+        });
+
+        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogDelete.cancel();
+                mode.finish();
+            }
+        });
+
+        dialogDelete.show();
+    }
+
+    @Override
+    public void handleActionEdit(final ActionMode mode) {
+        final Dialog dialogEdit = new Dialog(getActivity());
+        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogEdit.setContentView(R.layout.dialog_edit);
+
+        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
+        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
+        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
+        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
+        edtName.setText(listBlock.get(positionSeleceted).getUserName());
+        edtPhone.setText(listBlock.get(positionSeleceted).getPhoneNum());
+        tvOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContactObj contactObj = listBlock.get(positionSeleceted);
+                contactObj.setUserName(edtName.getText().toString());
+                contactObj.setPhoneNum(edtPhone.getText().toString());
+                BlockcallData.Instance(getContext()).update(contactObj);
+                dialogEdit.cancel();
+                mode.finish();
+            }
+        });
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogEdit.cancel();
+                mode.finish();
+            }
+        });
+        dialogEdit.show();
+    }
+
+    @Override
+    public void handleActionDestroy() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(BlockcallTab.this).attach(BlockcallTab.this).commit();
+        super.handleActionDestroy();
+    }
+
+    @Override
     public void enableActionMode(View itemView, int position) {
-        super.enableActionMode(itemView,position);
+        super.enableActionMode(itemView, position);
         toggleSelection(itemView,position);
     }
 

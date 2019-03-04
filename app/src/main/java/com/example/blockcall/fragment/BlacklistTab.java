@@ -47,6 +47,7 @@ public class BlacklistTab extends ListFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_blacklist, container, false);
         bindView(rootView);
+        modeCallback = new ActionModeCallback();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         rvList.setLayoutManager(mLayoutManager);
         blacklistAdapter = new BlacklistAdapter(listBlack, getContext());
@@ -93,7 +94,7 @@ public class BlacklistTab extends ListFragment {
                         tvOK.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                int idNote = 0;
+                                int idNote = 1;
                                 if(!listBlack.isEmpty()) {
                                     idNote = listBlack.get(listBlack.size()-1).getId() + 1;
                                 }
@@ -125,99 +126,6 @@ public class BlacklistTab extends ListFragment {
                 });
             }
         });
-
-        modeCallback = new ListFragment.ActionModeCallback() {
-            @Override
-            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        final Dialog dialogDelete = new Dialog(getActivity());
-                        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogDelete.setContentView(R.layout.dialog_delete);
-                        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
-                        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
-
-                        tvOKDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                for(Integer value : blacklistAdapter.getPositionItem()) {
-                                    if(AppUtil.isEnableSyn(getActivity())) {
-                                        String idContact = String.valueOf(listBlack.get(value).getId());
-                                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
-                                        mDatabase.child(idContact).removeValue();
-                                        listBlack.remove(value);
-                                    }else {
-                                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
-                                        listBlack.remove(value);
-                                    }
-                                }
-                                dialogDelete.cancel();
-                                mode.finish();
-                            }
-                        });
-
-                        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dialogDelete.cancel();
-                                mode.finish();
-                            }
-                        });
-                        dialogDelete.show();
-                        return true;
-                    case R.id.action_edit:
-                        final Dialog dialogEdit = new Dialog(getActivity());
-                        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogEdit.setContentView(R.layout.dialog_edit);
-
-                        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
-                        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
-                        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
-                        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
-                        edtName.setText(listBlack.get(positionSeleceted).getUserName());
-                        edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
-                        tvOK.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (AppUtil.isEnableSyn(getActivity())) {
-                                    String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
-                                    ContactObj contactObj = listBlack.get(positionSeleceted);
-                                    contactObj.setUserName(edtName.getText().toString());
-                                    contactObj.setPhoneNum(edtPhone.getText().toString());
-                                    mDatabase.child(idContact).child("phoneNum").setValue(contactObj.getPhoneNum());
-                                    mDatabase.child(idContact).child("userName").setValue(contactObj.getUserName());
-                                    BlacklistData.Instance(getContext()).update(contactObj);
-                                }else {
-                                    ContactObj contactObj = listBlack.get(positionSeleceted);
-                                    contactObj.setUserName(edtName.getText().toString());
-                                    contactObj.setPhoneNum(edtPhone.getText().toString());
-                                    BlacklistData.Instance(getContext()).update(contactObj);
-                                }
-                                dialogEdit.cancel();
-                                mode.finish();
-                            }
-                        });
-                        tvCancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialogEdit.cancel();
-                                mode.finish();
-                            }
-                        });
-                        dialogEdit.show();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
-                super.onDestroyActionMode(mode);
-            }
-        };
 
         return rootView;
     }
@@ -256,13 +164,100 @@ public class BlacklistTab extends ListFragment {
         }
     }
 
+    @Override
+    public void handleActionDelete(final ActionMode mode) {
+        final Dialog dialogDelete = new Dialog(getActivity());
+        dialogDelete.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogDelete.setContentView(R.layout.dialog_delete);
+        TextView tvOKDelete = (TextView) dialogDelete.findViewById(R.id.tv_ok_delete);
+        TextView tvCancelDelete = (TextView) dialogDelete.findViewById(R.id.tv_cancel_delete);
+
+        tvOKDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(Integer value : blacklistAdapter.getPositionItem()) {
+                    if(AppUtil.isEnableSyn(getActivity())) {
+                        String idContact = String.valueOf(listBlack.get(value).getId());
+                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                        mDatabase.child(idContact).removeValue();
+                        listBlack.remove(value);
+                    }else {
+                        BlacklistData.Instance(getContext()).delete(listBlack.get(value));
+                        listBlack.remove(value);
+                    }
+                }
+                dialogDelete.cancel();
+                mode.finish();
+            }
+        });
+
+        tvCancelDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogDelete.cancel();
+                mode.finish();
+            }
+        });
+        dialogDelete.show();
+    }
+
+    @Override
+    public void handleActionEdit(final ActionMode mode) {
+        final Dialog dialogEdit = new Dialog(getActivity());
+        dialogEdit.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogEdit.setContentView(R.layout.dialog_edit);
+
+        final EditText edtName = (EditText) dialogEdit.findViewById(R.id.edt_edit_name);
+        final EditText edtPhone = (EditText) dialogEdit.findViewById(R.id.edt_edit_phone);
+        TextView tvOK = (TextView) dialogEdit.findViewById(R.id.tv_edit_ok);
+        TextView tvCancel = (TextView) dialogEdit.findViewById(R.id.tv_edit_cancel);
+        edtName.setText(listBlack.get(positionSeleceted).getUserName());
+        edtPhone.setText(listBlack.get(positionSeleceted).getPhoneNum());
+        tvOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (AppUtil.isEnableSyn(getActivity())) {
+                    String idContact = String.valueOf(listBlack.get(positionSeleceted).getId());
+                    ContactObj contactObj = listBlack.get(positionSeleceted);
+                    contactObj.setUserName(edtName.getText().toString());
+                    contactObj.setPhoneNum(edtPhone.getText().toString());
+                    mDatabase.child(idContact).child("phoneNum").setValue(contactObj.getPhoneNum());
+                    mDatabase.child(idContact).child("userName").setValue(contactObj.getUserName());
+                    BlacklistData.Instance(getContext()).update(contactObj);
+                }else {
+                    ContactObj contactObj = listBlack.get(positionSeleceted);
+                    contactObj.setUserName(edtName.getText().toString());
+                    contactObj.setPhoneNum(edtPhone.getText().toString());
+                    BlacklistData.Instance(getContext()).update(contactObj);
+                }
+                dialogEdit.cancel();
+                mode.finish();
+            }
+        });
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogEdit.cancel();
+                mode.finish();
+            }
+        });
+        dialogEdit.show();
+    }
+
+    @Override
+    public void handleActionDestroy() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(BlacklistTab.this).attach(BlacklistTab.this).commit();
+        super.handleActionDestroy();
+    }
 
     public void bindView(View view) {
         super.bindView(view);
     }
 
+    @Override
     public void enableActionMode(View itemView, int position) {
-        super.enableActionMode(itemView,position);
+        super.enableActionMode(itemView, position);
         toggleSelection(itemView,position);
     }
 

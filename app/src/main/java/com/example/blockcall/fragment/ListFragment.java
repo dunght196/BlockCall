@@ -30,7 +30,9 @@ public class ListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        modeCallback = new ActionModeCallback();
+        return rootView;
     }
 
     protected void bindView(View view) {
@@ -51,13 +53,22 @@ public class ListFragment extends Fragment {
         }
 
         @Override
-        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
-            return false;
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    handleActionDelete(mode);
+                    return true;
+                case R.id.action_edit:
+                    handleActionEdit(mode);
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
+            handleActionDestroy();
         }
     };
 
@@ -66,5 +77,15 @@ public class ListFragment extends Fragment {
             mActionMode = getActivity().startActionMode(modeCallback);
             itemView.setSelected(true);
         }
+    }
+
+    public void handleActionDelete(ActionMode mode) {
+    }
+
+    public void handleActionEdit(ActionMode mode) {
+    }
+
+    public void handleActionDestroy() {
+        mActionMode = null;
     }
 }
