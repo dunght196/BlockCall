@@ -1,6 +1,7 @@
 package com.example.blockcall.utils;
 
-public class Constant {
+public class
+Constant {
 
     public static final String APP_PREF_NAME = "block_call_pref";
 

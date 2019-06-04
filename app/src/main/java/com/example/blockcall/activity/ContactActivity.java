@@ -84,9 +84,9 @@ public class ContactActivity extends AppCompatActivity {
                 // get key form listIndex
                 List<Integer> listItem = new ArrayList<>();
                 for(int i=0; i<listIndex.size(); i++) {
-                    listItem.add(listIndex.keyAt(i));
-                }
+                    if(listIndex.get(i)) listItem.add(listIndex.keyAt(i));
 
+                }
                 if(AppUtil.isEnableSyn(getApplicationContext())) {
                     if(!listFirebase.isEmpty()) {
                         idNote = listFirebase.get(listFirebase.size()-1).getId();
